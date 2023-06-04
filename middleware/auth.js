@@ -3,7 +3,7 @@ const db = require('../connectors/db');
 const roles = require('../constants/roles');
 const { getSessionToken } = require('../utils/session');
 
-module.exports = async function(req, res, next) {
+module.exports = async function (req, res, next) {
   const sessionToken = getSessionToken(req);
   if (!sessionToken) {
     return res.status(301).redirect('/');
@@ -11,7 +11,7 @@ module.exports = async function(req, res, next) {
 
   // We then get the session of the user from our session map
   // that we set in the signinHandler
-  const userSession = await db.select('*').from('se_project.sessions').where('token', sessionToken).first();
+  const userSession = await db.select('*').from('sessions').where('token', sessionToken).first();
   if (!userSession) {
     // If the session token is not present in session map, return an unauthorized error
     return res.status(301).redirect('/');

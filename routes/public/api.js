@@ -3,12 +3,12 @@ const { v4 } = require("uuid");
 const db = require("../../connectors/db");
 const roles = require("../../constants/roles");
 module.exports = function (app) {
-app.post("/api/v1/user", async function (req, res) {
+  app.post("/api/v1/user", async function (req, res) {
 
     // Check if user already exists in the system
     const userExists = await db
       .select("*")
-      .from("se_project.users")
+      .from("users")
       .where("email", req.body.email);
     if (!isEmpty(userExists)) {
       return res.status(400).json("user exists");
@@ -22,9 +22,9 @@ app.post("/api/v1/user", async function (req, res) {
       roleid: roles.user,
     };
     try {
-      const user = await db("se_project.users").insert(newUser).returning("*");
+      const user = await db("users").insert(newUser).returning("*");
 
-      return res.status(200).json(user );
+      return res.status(200).json(user);
     } catch (e) {
       console.log(e.message);
       return res.status(400).send("Could not register user");
@@ -48,7 +48,7 @@ app.post("/api/v1/user", async function (req, res) {
     // if invalid, send an unauthorized code
     const user = await db
       .select("*")
-      .from("se_project.users")
+      .from("users")
       .where("email", email)
       .first();
     if (isEmpty(user)) {
@@ -71,7 +71,7 @@ app.post("/api/v1/user", async function (req, res) {
       expiresat,
     };
     try {
-      await db("se_project.sessions").insert(session);
+      await db("sessions").insert(session);
       // In the response, set a cookie on the client with the name "session_cookie"
       // and the value as the UUID we generated. We also set the expiration time.
       return res
