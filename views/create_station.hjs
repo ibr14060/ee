@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Admin - Create New Normal Station</title>
+    <style>
+        /* Your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input[type="text"],
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .form-group button {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .form-group button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Create New Station</h1>
+        <form id="createstation">
+            <div class="form-group">
+                <label for="stationname">Station Name:</label>
+                <input type="text" id="stationname" name="stationname" placeholder="Enter station name">
+            </div>
+            <div class="form-group">
+                <label for="stationtype">Station Type:</label>
+                <select id="stationtype" name="stationtype">
+                    <option value="normal">Normal</option>
+                    <option value="transfer">Transfer</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="stationstatus">Station Status:</label>
+                <select id="stationstatus" name="stationstatus">
+                    <option value="new">New</option>
+                    <option value="old">Old</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="submit">Create Station</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#createstation").submit(function (event) {
+                event.preventDefault();
+
+                const stationname = $("#stationname").val();
+                const stationtype = $("#stationtype").val();
+                const stationstatus = $("#stationstatus").val();
+
+                const data = {
+                    stationname,
+                    stationtype,
+                    stationstatus
+                };
+
+                $.ajax({
+                    type: "POST",
+                    url: "/api/v1/station",
+                    data: JSON.stringify(data),
+                    contentType: "application/json",
+                    success: function (serverResponse) {
+                        console.log("Station created successfully!");
+                        // Perform any other actions upon successful creation
+                    },
+                    error: function (error) {
+                        console.error("Error creating station:", error);
+                        // Handle the error and display an appropriate message
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

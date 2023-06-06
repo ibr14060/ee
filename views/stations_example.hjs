@@ -1,55 +1,95 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Courses</title>
-    <link rel='stylesheet' href='/styles/bootstrap.min.css' />
-    <link rel='stylesheet' href='/styles/style.css' />
-    <script src="/js/jquery-2.2.0.min.js" type="text/javascript"></script>
-    <script src="/js/bootstrap.min.js" type="text/javascript"></script>
-  </head>
-  <body>
+
+<head>
+  <title>Courses</title>
+  <link rel='stylesheet' href='/styles/bootstrap.min.css' />
+  <link rel='stylesheet' href='/styles/style.css' />
+  <style>
+    /* Custom styles for the station page */
+    body {
+      background-color: #f8f8f8;
+      padding: 20px;
+    }
+
+    .navbar {
+      margin-bottom: 20px;
+    }
+
+    .btn-primary {
+      margin-bottom: 10px;
+    }
+
+    .table {
+      background-color: #fff;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    th,
+    td {
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f5f5f5;
+      color: #333;
+      font-weight: 600;
+    }
+
+    .table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .add-station-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
     <div>
-    <div>
-    <nav class="navbar navbar-inverse" style="padding-left:130px;">
-      <ul class="nav navbar-nav">
-        <li><a href="/dashboard">Home</a></li>
-        <li class="active"><a href="/stations_example">stations</a></li>
-        <li><a href="/users">Users</a></li>
-        <li><a href="/users/add">Add Users</a></li>
-        <li><a href="/">Logout</a></li>       
-      </ul>
-  </nav>
-  </div>
-    <br/>
-      {{#isAdmin}}
-      <div style="position:absolute; right:0;">
-        <input id="btnAddStation" type="button" value="Add station" class="btn btn-primary">
-        <br />
-      </div>
-      {{/isAdmin}}
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">id</th>
-            <th scope="col">Name</th>
-            <th scope="col">Type</th>
-            <th scope="col">Position</th>
-            <th scope="col">status</th>
-
-
-
-          </tr>
-          {{#stations}}
-            <tr>
-              <td>{{id}}</td>
-              <td>{{stationname}}</td>
-              <td>{{stationtype}}</td>
-              <td>{{stationposition}}</td>
-              <td>{{stationstatus}}</td>
-            </tr> 
-          {{/stations}}
-        </thead>
-      </table>
+      <nav class="navbar navbar-inverse" style="padding-left:130px;">
+        <ul class="nav navbar-nav">
+          <li><a href="/dashboard">Home</a></li>
+          <li class="active"><a href="/stations_example">Stations</a></li>
+          <li><a href="/users">Users</a></li>
+          <li><a href="/users/add">Add Users</a></li>
+          <li><a href="/">Logout</a></li>
+        </ul>
+      </nav>
     </div>
-  </body>
-  </html>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Name</th>
+          <th scope="col">Type</th>
+          <th scope="col">Position</th>
+          <th scope="col">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#stations}}
+        <tr>
+          <td>{{id}}</td>
+          <td>{{stationname}}</td>
+          <td>{{stationtype}}</td>
+          <td>{{stationposition}}</td>
+          <td>{{stationstatus}}</td>
+        </tr>
+        {{/stations}}
+      </tbody>
+    </table>
+    <div class="add-station-container">
+      <a href="/create_station" class="btn btn-primary">Add station</a>
+    </div>
+  </div>
+</body>
+
+</html>

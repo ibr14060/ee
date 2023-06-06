@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Admin - Create Route</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url("https://eu.thumbnail.oscpdata.com/routes-v2/ROUTE_3861401_300x240_PINK_ret.png");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-bottom: 15px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-bottom: 15px;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Create Route</h1>
+        <form id="routeForm">
+            <label for="routename">Route Name:</label>
+            <input type="text" id="routename" name="routename" required>
+
+            <label for="fromstationid">From Station ID:</label>
+            <input type="number" id="fromstationid" name="fromstationid" required>
+
+            <label for="tostationid">To Station ID:</label>
+            <input type="number" id="tostationid" name="tostationid" required>
+
+            <button type="submit">Create Route</button>
+        </form>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#routeForm").submit(function (event) {
+                event.preventDefault();
+
+                const routename = $("#routename").val();
+                const fromstationid = $("#fromstationid").val();
+                const tostationid = $("#tostationid").val();
+
+                const data = {
+                    routename,
+                    fromstationid,
+                    tostationid
+                };
+
+                $.ajax({
+                    type: "POST",
+                    url: "/api/v1/route",
+                    data: JSON.stringify(data),
+                    contentType: "application/json",
+                    success: function (serverResponse) {
+                        console.log("Route created successfully!");
+                        // Perform any other actions upon successful creation
+                    },
+                    error: function (error) {
+                        alert(`User login error: ${errorResponse.responseText}`);
+                        console.error("Error creating route:", error);
+                        // Handle the error and display an appropriate message
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

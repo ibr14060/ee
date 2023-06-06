@@ -6,7 +6,7 @@ module.exports = function (app) {
   app.get('/', function (req, res) {
     return res.render('index');
   });
-  // example of passing variables with a page
+  // example of passing variables with a pages
   app.get('/register', async function (req, res) {
     const stations = await db.select('*').from('stations');
     return res.render('register', { stations });

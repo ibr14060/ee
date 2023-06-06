@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin - Delete Route</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .route {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .route span {
+      flex-grow: 1;
+    }
+
+    .route button {
+      background-color: #f44336;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .route button:hover {
+      background-color: #e53935;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Routes</h1>
+    <div class="routes">
+      <div class="route">
+        <span>Route 1: Station A ➡️ Station B</span>
+        <button onclick="deleteRoute('forward')">Delete Forward</button>
+        <button onclick="deleteRoute('backward')">Delete Backward</button>
+      </div>
+      <div class="route">
+        <span>Route 2: Station C ⬅️ Station D</span>
+        <button onclick="deleteRoute('forward')">Delete Forward</button>
+        <button onclick="deleteRoute('backward')">Delete Backward</button>
+      </div>
+      <!-- Add more routes here -->
+    </div>
+  </div>
+
+  <script>
+    function deleteRoute(direction) {
+      // Perform deletion logic here
+      if (direction === 'forward') {
+        // Delete route in forward direction
+        console.log('Route deleted in forward direction');
+      } else if (direction === 'backward') {
+        // Delete route in backward direction
+        console.log('Route deleted in backward direction');
+      }
+    }
+  </script>
+</body>
+</html>

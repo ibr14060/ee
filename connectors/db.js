@@ -7,11 +7,11 @@ const knex = require('knex');
 const config = {
   client: 'pg',
   connection: {
-    host: 'localhost',
+    host: 'localhost', 
     port: 5432,
     user: 'postgres',
-    password: 'moussa',
-    database: 'postgres',
+    password: 'Dondon@2312',
+    database: 'se_project',
   }
 };
 

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Refund Requests</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-image: url("white.png");
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+    }
+
+    button {
+      background-color: #4caf50;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Refund Requests</h1>
+
+    <form id="refundForm">
+      <label for="userID">User ID:</label>
+      <input type="text" id="userID" name="userID" required>
+
+      <label for="refundAmount">Refund Amount:</label>
+      <input type="number" id="refundAmount" name="refundAmount" required>
+
+      <label for="ticketID">Ticket ID:</label>
+      <input type="text" id="ticketID" name="ticketID" required>
+
+      <button type="submit">Submit Refund Request</button>
+    </form>
+  </div>
+
+  <table>
+  
+    <tbody id="request-table">
+      <!-- Fetched refund requests will be dynamically inserted here -->
+    </tbody>
+  </table>
+
+   <script>
+    $(document).ready(function(){
+      $("#createstation").submit(function(event) {
+        event.preventDefault();
+
+        const stationname = $("#stationname").val();
+        const stationtype = $("#stationtype").val();
+        const stationposition = $("#stationposition").val();
+         const stationstatus = $("#stationstatus").val();
+
+        const data = {
+          stationname,
+          stationtype,
+          stationposition,
+          stationstatus
+        };
+
+        $.ajax({
+          type: "POST",
+          url: "/api/v1/station",
+          data : JSON.stringify(data),
+         // contentType: "application/json",
+          success: function(serverResponse) {
+            console.log("station created successfully!");
+            // Perform any other actions upon successful creation
+          },
+          error: function(error) {
+           // alert(`User login error: ${errorResponse.responseText}`);
+            console.error("Error creating station:", error);
+            // Handle the error and display an appropriate message
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

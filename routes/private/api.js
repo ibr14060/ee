@@ -177,6 +177,97 @@ module.exports = function (app) {
 
 
   })
+  // get subscription by id of the user 
+  app.get("/api/v1/subscription", async function (req, res) {
+    try {
+      const user = await getUser(req);
+      const userid=user.userid ;
+      // Retrieve zones data from database
+      const subscription = await db.select("*").from("subscription").where(subscription.userid===userid);
+
+      // Return zones data as JSON response
+      return res.status(200).json(subscription);
+    } catch (e) {
+      console.error(e.message);
+      return res.status(500).send("Server error");
+    }
+  });
+  //get all tickets 
+  app.get("/api/v1/tickets", async function (req, res) {
+    try {
+      // Retrieve zones data from database
+      const tickets = await db.select("*").from("tickets");
+
+      // Return zones data as JSON response
+      return res.status(200).json(tickets);
+    } catch (e) {
+      console.error(e.message);
+      return res.status(500).send("Server error");
+    }
+  });
+
+// post request to request a senior degree
+app.post('/api/v1/senior/request', async (req, res) => {
+  try {
+    const { nationalid } = req.body;
+    const { status } = req.body;
+    const user = await getUser(req);
+    const userid=user.userid ;
+
+    // Check if the station name is provided
+    if (!nationalid) {
+      return res.status(400).send('national is is required');
+    }
+
+    // Create a new station object
+    const newrequest = {
+      nationalid,
+      status,
+      userid,
+     
+    };
+
+    // Insert the new station into the "stations" table
+    await db("senior_requests").insert(newrequest).returning("*");
+
+    return res.status(201).send('request added successfully');
+  }
+  catch (error) {
+    console.log(error.message);
+    return res.status(400).send('Could not add the new request');
+  }
+});
+// post request to request a refund
+app.post('/api/v1/refund/request', async (req, res) => {
+  try {
+   // const { ticketid } = req.body;
+    const { refundamount } = req.body;
+    const { status } = req.body;
+    const user = await getUser(req);
+    const userid=user.userid ;
+
+    // Check if the station name is provided
+    if (!refundamount) {
+      return res.status(400).send('refundamount is is required');
+    }
+
+    // Create a new station object
+    const newrequest = {
+      status,
+      userid,
+      refundamount,
+    };
+
+    // Insert the new station into the "stations" table
+    await db("refund_requests").insert(newrequest).returning("*");
+
+    return res.status(201).send('request added successfully');
+  }
+  catch (error) {
+    console.log(error.message);
+    return res.status(400).send('Could not add the new request');
+  }
+});
 
 
   // STATIONS
@@ -185,7 +276,7 @@ module.exports = function (app) {
 
   app.post('/api/v1/station', async (req, res) => {
     try {
-      const { stationname } = req.body;
+      const { stationname, stationtype, stationstatus } = req.body;
 
       // Check if the station name is provided
       if (!stationname) {
@@ -195,9 +286,9 @@ module.exports = function (app) {
       // Create a new station object
       const newstation = {
         stationname,
-        stationtype: null, // Set the station type to null or provide a value if applicable
-        stationposition: null, // Set the station position to null or provide a value if applicable
-        stationstatus: null, // Set the station status to null or provide a value if applicable
+        stationtype,
+        stationposition: null,
+        stationstatus,
       };
 
       // Insert the new station into the "stations" table
@@ -210,7 +301,6 @@ module.exports = function (app) {
       return res.status(400).send('Could not add the new station');
     }
   });
-
 
   // Updating Stations by Admin
 
@@ -243,6 +333,7 @@ module.exports = function (app) {
     if (!fromstationid || !tostationid || !routename) {
       return res.status(400).json({ error: 'Missing required parameters' });
     }
+    console.log(tostationid);
 
     try {
       const newRoute = {
@@ -288,22 +379,58 @@ module.exports = function (app) {
 
 
   // Delete Route
-  app.delete('/api/v1/route/:id', async (req, res) => {
-    const { id } = req.params;
-
+  app.delete("/api/v1/route/:routeId", async function (req, res) {
+    const { routeId } = req.params;
+  
     try {
-      const deleteCount = await db('routes').where({ id }).del();
-
-      if (deleteCount === 0) {
-        return res.status(404).json({ error: 'Route not found' });
+      // Get the route being deleted
+      const route = await db("routes").where({ id: routeId }).first();
+      if (!route) {
+        return res.status(404).json({ error: "Route not found" });
       }
-
-      return res.status(204).end();
+  
+      const { fromstationid, tostationid } = route;
+  
+      // Get the from station
+      const fromStation = await db("stations").where({ id: fromstationid }).first();
+      if (!fromStation) {
+        return res.status(404).json({ error: "From station not found" });
+      }
+  
+      // Get the to station
+      const toStation = await db("stations").where({ id: tostationid }).first();
+      if (!toStation) {
+        return res.status(404).json({ error: "To station not found" });
+      }
+  
+      // Update station positions
+      if (fromStation.stationposition === "start") {
+        if(toStation.stationposition ==="end"){
+        // Update from station position to "end"
+        await db("stations").where({ id: fromstationid }).update({ stationposition: "end" });
+  
+        // Update to station position to "start"
+        await db("stations").where({ id: tostationid }).update({ stationposition: "start" });
+        }
+        else if (toStation.stationposition ==="middle"){
+          await db("stations").where({ id: fromstationid }).update({ stationposition: "middle" });
+  
+          // Update to station position to "start"
+          await db("stations").where({ id: tostationid }).update({ stationposition: "start" });
+        } 
+      }
+  
+      // Delete the route
+      await db("routes").where({ id: routeId }).del();
+  
+      res.status(204).send();
     } catch (error) {
       console.log(error);
-      return res.status(500).json({ error: 'Error deleting route', details: error.message });
+      res.status(500).json({ error: "Something went wrong" });
     }
   });
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////
 
 
   // Get all routes 
@@ -318,6 +445,104 @@ module.exports = function (app) {
   });
 
 
+
+// Delete Station
+// Delete Station
+app.delete("/api/v1/stations/:stationid", async function (req, res) {
+  const { stationid } = req.params;
+
+  try {
+    // Get the station being deleted
+    const station = await db("stations").where({ id: stationid }).first();
+    if (!station) {
+      return res.status(404).json({ error: "Station not found" });
+    }
+
+    const { stationtype, stationposition } = station;
+
+    // Delete the station itself
+    await db("stations").where({ id: stationid }).del();
+
+    if (stationtype === "normal") {
+      if (stationposition === "start") {
+        // Find the next station in the route
+        const nextStation = await db("stations")
+          .where("id", ">", stationid)
+          .orderBy("id")
+          .first();
+
+        if (nextStation) {
+          // Update the next station's position to "start"
+          await db("stations")
+            .where({ id: nextStation.id })
+            .update({ stationposition: "start" });
+        }
+      } else if (stationposition === "end") {
+        // Find the previous station in the route
+        const prevStation = await db("stations")
+          .where("id", "<", stationid)
+          .orderBy("id", "desc")
+          .first();
+
+        if (prevStation) {
+          // Update the previous station's position to "end"
+          await db("stations")
+            .where({ id: prevStation.id })
+            .update({ stationposition: "end" });
+        }
+      } else if (stationposition === "middle") {
+        // Find the previous and next stations in the route
+        const [prevStation, nextStation] = await db("routes")
+          .leftJoin("stations as prev", "routes.fromstationid", "prev.id")
+          .leftJoin("stations as next", "routes.tostationid", "next.id")
+          .where({ "routes.fromstationid": stationid })
+          .orWhere({ "routes.tostationid": stationid })
+          .select("prev.*", "next.*");
+
+        if (prevStation && nextStation) {
+          // Update the routes
+          await db("routes")
+            .where({ fromstationid: stationid })
+            .orWhere({ tostationid: stationid })
+            .update({
+              fromstationid: prevStation.id,
+              tostationid: nextStation.id,
+            });
+
+          // Delete the old stationroutes
+          await db("stationroutes")
+            .where({ stationid })
+            .del();
+
+          // Create new stationroutes for the updated routes
+          const newStationRoutes = [
+            { stationid: prevStation.id, routeid: prevStation.routeid },
+            { stationid: nextStation.id, routeid: nextStation.routeid },
+          ];
+          await db("stationroutes")
+            .insert(newStationRoutes);
+        }
+      }
+    }
+    //////////////
+    else if(stationtype === "transfer"){
+      const route = await db("routes").where({ tostationid: stationid }).first();
+      console.log(route);
+      const stationtobe =route.fromstationid ;
+      await db("routes").where({ fromstationid: stationid }).update({ fromstationid: stationtobe });
+
+      // Delete the station itself
+      await db("stations").where({ id: stationid }).del();
+      
+
+    }
+
+    res.status(204).send();
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
 
 
 

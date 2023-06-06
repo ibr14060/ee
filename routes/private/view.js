@@ -16,7 +16,7 @@ const getUser = async function (req) {
     .first();
 
   console.log('user =>', user)
-  user.isStudent = user.roleid === roles.student;
+  user.isUser = user.roleid === roles.user;
   user.isAdmin = user.roleid === roles.admin;
   user.isSenior = user.roleid === roles.senior;
 
@@ -27,16 +27,39 @@ module.exports = function (app) {
   // Register HTTP endpoint to render /users page
   app.get('/dashboard', async function (req, res) {
     const user = await getUser(req);
-    return res.render('dashboard', user);
+    const y = await db('subscription').where('userid', user.userid);
+    const isSubscribed = y.length === 0 ? false : true;
+    return res.render('dashboard', { user, isSubscribed });
   });
+
   app.get('/dashboardx', async function (req, res) {
     const user = await getUser(req);
     return res.render('dashboard', user);
   });
 
+  app.get('/create_station', async function (req, res) {
+    const user = await getUser(req);
+    return res.render('create_station', user);
+  });
+
+  app.get('/create_route', async function (req, res) {
+    const user = await getUser(req);
+    return res.render('create_route', user);
+  });
+
+  const isSub = async function (req, res) {
+    const user = await getUser(req);
+    const y = await db('subscription').where('userid', user.userid);
+    const isSubscribed = y.length === 0 ? false : true;
+    return res.render('purchase', { user, isSubscribed });
+  }
+
+  app.get('/purchase', isSub);
+
   app.get('/users/add', async function (req, res) {
     return res.render('add-user');
   });
+
   // Register HTTP endpoint to render /users page
   app.get('/users', async function (req, res) {
     const users = await db.select('*').from('users');
@@ -52,4 +75,13 @@ module.exports = function (app) {
     return res.render('stations_example', { ...user, stations });
   });
 
+  app.get('/routes', async function (req, res) {
+    const user = await getUser(req);
+    const routes = await db.select('*').from('routes');
+    return res.render('routes', { ...user, routes });
+  });
+  app.get('/request_arefund', async function (req, res) {
+    const user = await getUser(req);
+    return res.render('request_arefund', user);
+  });
 };

@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin - Delete Station</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .station-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .station-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #ccc;
+      padding: 10px 0;
+    }
+
+    .station-list-item:last-child {
+      border-bottom: none;
+    }
+
+    .station-name {
+      font-weight: bold;
+    }
+
+    .delete-button {
+      background-color: #f44336;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .delete-button:hover {
+      background-color: #d32f2f;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Station List</h1>
+    <ul class="station-list">
+      <li class="station-list-item">
+        <span class="station-name">Station 1</span>
+        <button class="delete-button">Delete</button>
+      </li>
+      <li class="station-list-item">
+        <span class="station-name">Station 2</span>
+        <button class="delete-button">Delete</button>
+      </li>
+      <li class="station-list-item">
+        <span class="station-name">Station 3</span>
+        <button class="delete-button">Delete</button>
+      </li>
+      <!-- Add more list items for each station -->
+    </ul>
+  </div>
+</body>
+</html>
