@@ -42,6 +42,20 @@ module.exports = function (app) {
     return res.render('create_station', user);
   });
 
+  app.get('/purchase_online', async function (req, res) {
+    const user = await getUser(req);
+    return res.render('purchase_online', user);
+  });
+
+  app.get('/request_arefund', async function (req, res) {
+    const user = await getUser(req);
+    return res.render('request_arefund', user);
+  });
+  app.get('/request_a_senior', async function (req, res) {
+    const user = await getUser(req);
+    return res.render('request_a_senior', user);
+  });
+
   app.get('/create_route', async function (req, res) {
     const user = await getUser(req);
     return res.render('create_route', user);
@@ -79,9 +93,5 @@ module.exports = function (app) {
     const user = await getUser(req);
     const routes = await db.select('*').from('routes');
     return res.render('routes', { ...user, routes });
-  });
-  app.get('/request_arefund', async function (req, res) {
-    const user = await getUser(req);
-    return res.render('request_arefund', user);
   });
 };
