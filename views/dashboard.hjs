@@ -143,7 +143,7 @@
               </a>
               <ul class="dropdown-menu">
                 <li><a href="/admin_refund_requests">Request a Refund</a></li>
-                <li><a href="/request_a_senior">Request a Senior</a></li>
+                <li><a href="/admin_senior_requests">Request a Senior</a></li>
               </ul>
             </li>
             <li><a href="/tickets">My Tickets</a></li>

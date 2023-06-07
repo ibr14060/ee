@@ -208,15 +208,27 @@ module.exports = function (app) {
   
       const updatingStatus = await db('senior_requests')
         .where({ id: requestId })
-        .update({ status: status }); // Include the status value in the update query
+        .update({ status: status });
   
-        console.log(updatingStatus);
-        return res.status(200).json(updatingStatus); // Changed the status code
+      if (status === 'accepted') {
+        await db('users')
+          .where('id', '=', function() {
+            this.select('userid')
+              .from('senior_requests')
+              .where('id', requestId);
+          })
+          .update({ roleid: 3 });
+      }
+  
+      console.log(updatingStatus);
+      return res.status(200).json(updatingStatus);
     } catch (error) {
       console.log(error.message);
       return res.status(400).send("Could not update the senior status");
     }
   });
+  
+  
 
   
   // get subscription by id of the user 
