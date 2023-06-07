@@ -59,8 +59,6 @@
     <h1>Refund Requests</h1>
 
     <form id="refundForm">
-      <label for="userID">User ID:</label>
-      <input type="text" id="userID" name="userID" required>
 
       <label for="refundAmount">Refund Amount:</label>
       <input type="number" id="refundAmount" name="refundAmount" required>
@@ -73,45 +71,49 @@
   </div>
 
   <table>
-  
     <tbody id="request-table">
       <!-- Fetched refund requests will be dynamically inserted here -->
     </tbody>
   </table>
 
-   <script>
-    $(document).ready(function(){
-      $("#createstation").submit(function(event) {
-        event.preventDefault();
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      // Handle form submission
+      $('#refundForm').submit(function(event) {
+        event.preventDefault(); // Prevent the default form submission
 
-        const stationname = $("#stationname").val();
-        const stationtype = $("#stationtype").val();
-        const stationposition = $("#stationposition").val();
-         const stationstatus = $("#stationstatus").val();
+        // Get the form data
+        var refundAmount = $('#refundAmount').val();
+        var ticketID = $('#ticketID').val();
 
-        const data = {
-          stationname,
-          stationtype,
-          stationposition,
-          stationstatus
+        // Create the request object
+        var requestData = {
+          refundamount: refundAmount,
+          status: "pending",
+          ticketid: ticketID
         };
 
+        // Send the AJAX POST request
         $.ajax({
-          type: "POST",
-          url: "/api/v1/station",
-          data : JSON.stringify(data),
-         // contentType: "application/json",
-          success: function(serverResponse) {
-            console.log("station created successfully!");
-            // Perform any other actions upon successful creation
+          url: '/api/v1/refund/request',
+          method: 'POST',
+          data: requestData,
+          success: function(response) {
+            console.log('Refund request submitted successfully.');
+            // Reset the form
+            $('#refundForm')[0].reset();
+            // Refresh the refund requests table
+            fetchRefundRequests();
           },
           error: function(error) {
-           // alert(`User login error: ${errorResponse.responseText}`);
-            console.error("Error creating station:", error);
-            // Handle the error and display an appropriate message
+            console.log('Error submitting refund request:', error);
           }
         });
       });
+
+      // Fetch refund requests on page load
+     
     });
   </script>
 </body>

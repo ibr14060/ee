@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Courses</title>
+  <link rel='stylesheet' href='/styles/bootstrap.min.css' />
+  <link rel='stylesheet' href='/styles/style.css' />
+  <style>
+    /* Custom styles for the station page */
+    body {
+      background-color: #f8f8f8;
+      padding: 20px;
+    }
+
+    .navbar {
+      margin-bottom: 20px;
+    }
+
+    .btn-primary {
+      margin-bottom: 10px;
+    }
+
+    .table {
+      background-color: #fff;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    th,
+    td {
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f5f5f5;
+      color: #333;
+      font-weight: 600;
+    }
+
+    .table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .add-station-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .button-spacing {
+      margin-left: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <nav class="navbar navbar-inverse" style="padding-left:130px;">
+      <ul class="nav navbar-nav">
+        <li><a href="/dashboard">Home</a></li>
+        <li class="active"><a href="/stations_example">Stations</a></li>
+        <li><a href="/users">Users</a></li>
+        <li><a href="/users/add">Add Users</a></li>
+        <li><a href="/">Logout</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Status</th>
+        <th scope="col">User ID</th>
+        <th scope="col">National ID</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $.ajax({
+        url: '/api/v1/requests/senior',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          $.each(data, function(index, senior) {
+            var row = '<tr>' +
+              '<td>' + senior.id + '</td>' +
+              '<td>' + senior.status + '</td>' +
+              '<td>' + senior.userid + '</td>' +
+              '<td>' + senior.nationalid + '</td>' +
+
+              '<td>' +
+              '<button class="btn btn-success accept-btn" data-id="' + senior.id + '">Accept</button>' +
+              '<button class="btn btn-danger reject-btn button-spacing" data-id="' + senior.id + '">Reject</button>' +
+              '</td>' +
+              '</tr>';
+            $('tbody').append(row);
+          });
+        },
+        error: function() {
+          console.log('Error fetching data from the API.');
+        }
+      });
+
+      // Handle accept button click event
+      $(document).on('click', '.accept-btn', function() {
+        var requestid = $(this).data('id');
+        $.ajax({
+          url: '/api/v1/requests/senior/' + requestid,
+          method: 'PUT',
+          data: { status: "accepted" },
+          success: function() {
+            console.log('Refund request accepted.');
+          },
+          error: function() {
+            console.log('Error accepting the refund request.');
+          }
+        });
+      });
+
+      // Handle reject button click event
+      $(document).on('click', '.reject-btn', function() {
+        var requestid = $(this).data('id');
+        $.ajax({
+          url: '/api/v1/requests/senior/' + requestid,
+          method: 'PUT',
+          data: { status: "rejected" },
+          success: function() {
+            console.log('Refund request rejected.');
+          },
+          error: function() {
+            console.log('Error rejecting the refund request.');
+          }
+        });
+      });
+
+    });
+  </script>
+</body>
+
+</html>

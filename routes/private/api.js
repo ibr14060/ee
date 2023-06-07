@@ -183,47 +183,42 @@ module.exports = function (app) {
 
 
   app.put('/api/v1/requests/refunds/:requestId', async (req, res) => {
-
     try {
-      const { requestId } = req.params
-      const { requeststatus } = req.body
-      const UpdatingStatus = await db('refund_requests')
-        .where("id", requestId) //the
-        .update({ status: requeststatus })
-      console.log(UpdatingStatus);
-      return res.status(201).json(UpdatingStatus);
-
-    }
-    catch (error) {
+      const { requestId } = req.params;
+      const { status } = req.body;
+  
+      const updatingStatus = await db('refund_requests')
+        .where({ id: requestId })
+        .update({ status: status }); // Include the status value in the update query
+  
+        console.log(updatingStatus);
+        return res.status(200).json(updatingStatus); // Changed the status code
+    } catch (error) {
       console.log(error.message);
-      return res.status(400).send("Could not get the updated Zones");
+      return res.status(400).send("Could not update the refund status");
     }
-
-
-  })
+  });
+  
 
   //Accept or Reject Senior not sure
-
-
   app.put('/api/v1/requests/senior/:requestId', async (req, res) => {
-
     try {
-      const { requestId } = req.params
-      const { seniorstatus } = req.body
-      const UpdatingStatus = await db('senior_requests')
-        .where("id", requestId) //the
-        .update({ status: seniorstatus })
-      console.log(UpdatingStatus);
-      return res.status(201).json(UpdatingStatus);
-
-    }
-    catch (error) {
+      const { requestId } = req.params;
+      const { status } = req.body;
+  
+      const updatingStatus = await db('senior_requests')
+        .where({ id: requestId })
+        .update({ status: status }); // Include the status value in the update query
+  
+        console.log(updatingStatus);
+        return res.status(200).json(updatingStatus); // Changed the status code
+    } catch (error) {
       console.log(error.message);
-      return res.status(400).send("Could not get the updated Zones");
+      return res.status(400).send("Could not update the senior status");
     }
+  });
 
-
-  })
+  
   // get subscription by id of the user 
   app.get("/api/v1/subscription", async function (req, res) {
     try {
@@ -257,7 +252,7 @@ module.exports = function (app) {
 app.post('/api/v1/senior/request', async (req, res) => {
   try {
     const { nationalid } = req.body;
-    const { status } = req.body;
+    //const { status } = req.body;
     const user = await getUser(req);
     const userid=user.userid ;
 
@@ -269,7 +264,7 @@ app.post('/api/v1/senior/request', async (req, res) => {
     // Create a new station object
     const newrequest = {
       nationalid,
-      status,
+      status: "pending",
       userid,
      
     };
@@ -287,30 +282,29 @@ app.post('/api/v1/senior/request', async (req, res) => {
 // post request to request a refund
 app.post('/api/v1/refund/request', async (req, res) => {
   try {
-   // const { ticketid } = req.body;
     const { refundamount } = req.body;
-    const { status } = req.body;
+    const { ticketid } = req.body;
     const user = await getUser(req);
-    const userid=user.userid ;
+    const userid = user.userid;
 
-    // Check if the station name is provided
+    // Check if the refund amount is provided
     if (!refundamount) {
-      return res.status(400).send('refundamount is is required');
+      return res.status(400).send('refundamount is required');
     }
 
-    // Create a new station object
+    // Create a new request object with the initial status as "pending"
     const newrequest = {
-      status,
+      status: "pending",
       userid,
       refundamount,
+      ticketid,
     };
 
-    // Insert the new station into the "stations" table
+    // Insert the new request into the "refund_requests" table
     await db("refund_requests").insert(newrequest).returning("*");
 
     return res.status(201).send('request added successfully');
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error.message);
     return res.status(400).send('Could not add the new request');
   }
@@ -590,18 +584,7 @@ app.delete("/api/v1/stations/:stationid", async function (req, res) {
     res.status(500).json({ error: "Something went wrong" });
   }
 });
-/*
-app.get("/api/v1/checkprice", async function (req, res) {
-  try {
-    const { originstationid } = req.params;
-    const { destinationstationid } = req.params;
-    
-  } catch (e) {
-    console.error(e.message);
-    return res.status(500).send("Server error");
-  }
-});
-*/
+
 app.get('/api/v1/tickets/price/:originId/:destinationId', async (req, res) => {
   const { originId, destinationId } = req.params;
 
@@ -664,6 +647,29 @@ app.get('/api/v1/tickets/price/:originId/:destinationId', async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: 'Something went wrong' });
+  }
+});
+
+// get all request refund
+
+app.get('/api/v1/requests/refunds', async (req, res) => {
+  try {
+    const refunds = await db.select('*').from('refund_requests');
+    return res.status(200).json(refunds);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: 'Error retrieving requests', details: error.message });
+  }
+});
+// get all request senior
+
+app.get('/api/v1/requests/senior', async (req, res) => {
+  try {
+    const senior = await db.select('*').from('senior_requests');
+    return res.status(200).json(senior);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: 'Error retrieving requests', details: error.message });
   }
 });
 

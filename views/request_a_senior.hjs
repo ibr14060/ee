@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>National ID Form</title>
-  <style>
+ <style>
     body {
       display: flex;
       justify-content: center;
@@ -31,12 +31,46 @@
 </head>
 <body>
   <div class="form-container">
-    <h1>National ID </h1>
-    <form>
+    <h1>National ID</h1>
+    <form id="nationalIdForm">
       <input type="text" id="national-id" placeholder="Enter National ID">
       <br>
       <button type="submit">Submit</button>
     </form>
   </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      // Handle form submission
+      $('#nationalIdForm').submit(function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        // Get the form data
+        var nationalid = $('#national-id').val();
+
+        // Create the request object
+        var requestData = {
+          nationalid: nationalid
+        };
+
+        // Send the AJAX POST request
+        $.ajax({
+          url: '/api/v1/senior/request',
+          method: 'POST',
+          data: JSON.stringify(requestData),
+          contentType: 'application/json',
+          success: function(response) {
+            console.log('National ID submitted successfully.');
+            // Reset the form
+            $('#nationalIdForm')[0].reset();
+          },
+          error: function(error) {
+            console.log('Error submitting national ID:', error);
+          }
+        });
+      });
+    });
+  </script>
 </body>
 </html>

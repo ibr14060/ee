@@ -94,4 +94,12 @@ module.exports = function (app) {
     const routes = await db.select('*').from('routes');
     return res.render('routes', { ...user, routes });
   });
+  app.get('/admin_refund_requests', async function (req, res) {
+    const user = await getUser(req);
+    return res.render('admin_refund_requests', user);
+  });
+  app.get('/admin_senior_requests', async function (req, res) {
+    const user = await getUser(req);
+    return res.render('admin_senior_requests', user);
+  });
 };

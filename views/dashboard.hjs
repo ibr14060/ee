@@ -142,7 +142,7 @@
                 <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
-                <li><a href="/request_arefund">Request a Refund</a></li>
+                <li><a href="/admin_refund_requests">Request a Refund</a></li>
                 <li><a href="/request_a_senior">Request a Senior</a></li>
               </ul>
             </li>

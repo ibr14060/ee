@@ -46,17 +46,19 @@
                 <div>
                     <label for="origin">Origin:</label>
                     <select id="origin" name="origin">
-                        <option value="station1">Station 1</option>
-                        <option value="station2">Station 2</option>
-                        <!-- Add more options for your stations here -->
+                        <option value="">Choose origin</option>
+                        {{#stations}}
+                        <option value="{{id}}">{{stationname}}</option>
+                        {{/stations}}
                     </select>
                 </div>
                 <div>
                     <label for="destination">Destination:</label>
                     <select id="destination" name="destination">
-                        <option value="station1">Station 1</option>
-                        <option value="station2">Station 2</option>
-                        <!-- Add more options for your stations here -->
+                        <option value="">Choose destination</option>
+                        {{#stations}}
+                        <option value="{{id}}">{{stationname}}</option>
+                        {{/stations}}
                     </select>
                 </div>
                 <div>
@@ -79,10 +81,51 @@
                     <input type="submit" value="Purchase" class="btn btn-primary">
                 </div>
             </form>
+            <div id="priceDiv">
+                <h2>Price: <span id="ticketPrice">0</span></h2>
+            </div>
+
         </div>
     </div>
 
     <script>
+
+        // Function to fetch the ticket price based on the selected origin and destination
+        function getTicketPrice() {
+            var originId = document.getElementById('origin').value;
+            var destinationId = document.getElementById('destination').value;
+
+            if (originId === destinationId) {
+                alert('Please select different origin and destination');
+                return;
+            }
+
+            // Make an AJAX request to the server to get the ticket price
+            $.ajax({
+                url: '/api/v1/tickets/price/' + originId + '/' + destinationId,
+                method: 'GET',
+                data: {
+                    originId: originId,
+                    destinationId: destinationId
+                },
+                success: function (response) {
+                    var priceDiv = document.getElementById('priceDiv');
+                    priceDiv.innerHTML = response.ticketPrice;
+                },
+                error: function (xhr, status, error) {
+                    if (xhr.status === 404 && xhr.responseJSON.error === 'No route found between the origin and destination') {
+                        alert('No route found between the origin and destination');
+                    } else {
+                        console.log(error);
+                    }
+                }
+            });
+        }
+
+        // Event listener when the origin or destination selection is changed
+        document.getElementById('origin').addEventListener('change', getTicketPrice);
+        document.getElementById('destination').addEventListener('change', getTicketPrice);
+
         document.getElementById('purchaseForm').addEventListener('submit', function (event) {
             var paymentMethod = document.getElementById('payment').value;
             if (paymentMethod === 'online') {
@@ -90,7 +133,6 @@
                 var origin = document.getElementById('origin').value;
                 var destination = document.getElementById('destination').value;
                 var datetime = document.getElementById('datetime').value;
-
                 var redirectURL = '/purchase_online?origin=' + encodeURIComponent(origin) +
                     '&destination=' + encodeURIComponent(destination) +
                     '&datetime=' + encodeURIComponent(datetime);
