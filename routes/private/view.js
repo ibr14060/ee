@@ -102,4 +102,8 @@ module.exports = function (app) {
     const user = await getUser(req);
     return res.render('admin_senior_requests', user);
   });
+  app.get('/tickets', async function (req, res) {
+    const user = await getUser(req);
+    return res.render('tickets', user);
+  });
 };

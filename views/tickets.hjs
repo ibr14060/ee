@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Courses</title>
+  <link rel='stylesheet' href='/styles/bootstrap.min.css' />
+  <link rel='stylesheet' href='/styles/style.css' />
+  <style>
+    /* Custom styles for the station page */
+    body {
+      background-color: #f8f8f8;
+      padding: 20px;
+    }
+
+    .navbar {
+      margin-bottom: 20px;
+    }
+
+    .btn-primary {
+      margin-bottom: 10px;
+    }
+
+    .table {
+      background-color: #fff;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    th,
+    td {
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f5f5f5;
+      color: #333;
+      font-weight: 600;
+    }
+
+    .table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .add-station-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .button-spacing {
+      margin-left: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <nav class="navbar navbar-inverse" style="padding-left:130px;">
+      <ul class="nav navbar-nav">
+        <li><a href="/dashboard">Home</a></li>
+        <li class="active"><a href="/stations_example">Stations</a></li>
+        <li><a href="/users">Users</a></li>
+        <li><a href="/users/add">Add Users</a></li>
+        <li><a href="/">Logout</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Origin</th>
+        <th scope="col">Destination</th>
+        <th scope="col">User ID</th>
+        <th scope="col">Sub ID</th>
+        <th scope="col">Trip Date</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+  $(document).ready(function() {
+  $.ajax({
+    url: '/api/v1/tickets',
+    method: 'GET',
+    dataType: 'json',
+    success: function(data) {
+      $.each(data, function(index, ticket) {
+        var row = '<tr>' +
+          '<td>' + ticket.id + '</td>' +
+          '<td>' + ticket.origin + '</td>' +
+          '<td>' + ticket.destination + '</td>' +
+          '<td>' + ticket.userid + '</td>' +
+          '<td>' + ticket.subid + '</td>' +
+          '<td>' + ticket.tripdate + '</td>' +
+          '</tr>';
+        $('tbody').append(row);
+      });
+    },
+    error: function() {
+      console.log('Error fetching data from the API.');
+    }
+  });
+});
+  </script>
+</body>
+
+</html>
