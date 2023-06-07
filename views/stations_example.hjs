@@ -2,94 +2,144 @@
 <html>
 
 <head>
-  <title>Courses</title>
-  <link rel='stylesheet' href='/styles/bootstrap.min.css' />
-  <link rel='stylesheet' href='/styles/style.css' />
-  <style>
-    /* Custom styles for the station page */
-    body {
-      background-color: #f8f8f8;
-      padding: 20px;
-    }
+    <title>Courses</title>
+    <link rel='stylesheet' href='/styles/bootstrap.min.css' />
+    <link rel='stylesheet' href='/styles/style.css' />
+    <style>
+        /* Custom styles for the station page */
+        body {
+            background-color: #f8f8f8;
+            padding: 20px;
+        }
 
-    .navbar {
-      margin-bottom: 20px;
-    }
+        .navbar {
+            margin-bottom: 20px;
+        }
 
-    .btn-primary {
-      margin-bottom: 10px;
-    }
+        .btn-primary {
+            margin-bottom: 10px;
+        }
 
-    .table {
-      background-color: #fff;
-      border-radius: 6px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
+        .table {
+            background-color: #fff;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
 
-    th,
-    td {
-      padding: 12px;
-      text-align: left;
-    }
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+        }
 
-    th {
-      background-color: #f5f5f5;
-      color: #333;
-      font-weight: 600;
-    }
+        th {
+            background-color: #f5f5f5;
+            color: #333;
+            font-weight: 600;
+        }
 
-    .table tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
+        .table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
 
-    .add-station-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 20px;
-    }
-  </style>
+        .add-station-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .delete-button {
+            display: inline-block;
+            padding: 6px 12px;
+            margin-bottom: 0;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.42857143;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            cursor: pointer;
+            background-image: none;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            color: #fff;
+            background-color: #d9534f;
+            border-color: #d43f3a;
+        }
+    </style>
 </head>
 
 <body>
-  <div>
     <div>
-      <nav class="navbar navbar-inverse" style="padding-left:130px;">
-        <ul class="nav navbar-nav">
-          <li><a href="/dashboard">Home</a></li>
-          <li class="active"><a href="/stations_example">Stations</a></li>
-          <li><a href="/users">Users</a></li>
-          <li><a href="/users/add">Add Users</a></li>
-          <li><a href="/">Logout</a></li>
-        </ul>
-      </nav>
+        <div>
+            <nav class="navbar navbar-inverse" style="padding-left:130px;">
+                <ul class="nav navbar-nav">
+                    <li><a href="/dashboard">Home</a></li>
+                    <li class="active"><a href="/stations_example">Stations</a></li>
+                    {{#isAdmin}}
+                    <li><a href="/users">Users</a></li>
+                    <li><a href="/users/add">Add Users</a></li>
+                    {{/isAdmin}}
+                    <li><a href="/">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Position</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#stations}}
+                <tr>
+                    <td>{{id}}</td>
+                    <td>{{stationname}}</td>
+                    <td>{{stationtype}}</td>
+                    <td>{{stationposition}}</td>
+                    <td>{{stationstatus}}</td>
+                    {{#isAdmin}}
+                    <td>
+                        <button class="delete-button" onclick="deleteStation('{{id}}')">Delete</button>
+                    </td>
+                    {{/isAdmin}}
+                </tr>
+                {{/stations}}
+            </tbody>
+        </table>
+        {{#isAdmin}}
+        <div class="add-station-container">
+            <a href="/create_station" class="btn btn-primary">Add station</a>
+        </div>
+        {{/isAdmin}}
     </div>
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">ID</th>
-          <th scope="col">Name</th>
-          <th scope="col">Type</th>
-          <th scope="col">Position</th>
-          <th scope="col">Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{#stations}}
-        <tr>
-          <td>{{id}}</td>
-          <td>{{stationname}}</td>
-          <td>{{stationtype}}</td>
-          <td>{{stationposition}}</td>
-          <td>{{stationstatus}}</td>
-        </tr>
-        {{/stations}}
-      </tbody>
-    </table>
-    <div class="add-station-container">
-      <a href="/create_station" class="btn btn-primary">Add station</a>
-    </div>
-  </div>
+
+    <script>
+        function deleteStation(stationId) {
+            // Perform the API call to delete the station with the given stationId
+            // Example using Fetch API:
+            fetch(`/api/v1/stations/${stationId}`, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Station deleted successfully');
+                        // Refresh the page or update the UI as needed
+                    } else {
+                        console.error('Error deleting station');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting station:', error);
+                });
+        }
+    </script>
 </body>
 
 </html>

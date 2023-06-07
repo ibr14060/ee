@@ -48,6 +48,25 @@
             align-items: center;
             margin-top: 20px;
         }
+
+        .delete-button {
+            display: inline-block;
+            padding: 6px 12px;
+            margin-bottom: 0;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.42857143;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            cursor: pointer;
+            background-image: none;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            color: #fff;
+            background-color: #d9534f;
+            border-color: #d43f3a;
+        }
     </style>
 </head>
 
@@ -58,8 +77,10 @@
                 <ul class="nav navbar-nav">
                     <li><a href="/dashboard">Home</a></li>
                     <li class="active"><a href="/routes_example">Routes</a></li>
+                    {{#isAdmin}}
                     <li><a href="/users">Users</a></li>
                     <li><a href="/users/add">Add Users</a></li>
+                    {{/isAdmin}}
                     <li><a href="/">Logout</a></li>
                 </ul>
             </nav>
@@ -71,6 +92,7 @@
                     <th scope="col">route name</th>
                     <th scope="col">fromstation id</th>
                     <th scope="col">tostation id</th>
+                    <th scope="col">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -80,14 +102,42 @@
                     <td>{{routename}}</td>
                     <td>{{fromstationid}}</td>
                     <td>{{tostationid}}</td>
+                     {{#isAdmin}}
+                    <td>
+                        <button class="delete-button" onclick="deleteRoute('{{id}}')">Delete</button>
+                    </td>
+                     {{/isAdmin}}
                 </tr>
                 {{/routes}}
             </tbody>
         </table>
+        {{#isAdmin}}
         <div class="add-route-container">
             <a href="/create_route" class="btn btn-primary">Add route</a>
         </div>
+        
+        {{/isAdmin}}
     </div>
+
+    <script>
+        function deleteRoute(routeId) {
+            // Perform the API call to delete the route with the given routeId
+            // Example using jQuery's AJAX:
+            $.ajax({
+                url: '/api/v1/route/' + routeId,
+                type: 'DELETE',
+                success: function (response) {
+                    // Handle success response
+                    console.log('Route deleted successfully');
+                    // Refresh the page or update the UI as needed
+                },
+                error: function (xhr, status, error) {
+                    // Handle error response
+                    console.log('Error deleting route:', error);
+                }
+            });
+        }
+    </script>
 </body>
 
 </html>

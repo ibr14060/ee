@@ -10,33 +10,42 @@
   </head>
   <body>
       <script>
-      $(document).ready(function(){
-        $("#submit").click(function() {
-          const email = $('#email').val();
-          const password = $('#password').val();
+    $(document).ready(function() {
+  $("#submit").click(function() {
+    const email = $('#email').val();
+    const password = $('#password').val();
 
-          const data = {
-            email,
-            password,
-          };
+    const data = {
+      email,
+      password,
+    };
 
-          $.ajax({
-            type: "POST",
-            url: '/api/v1/user/login',
-            data,
-            success: function(serverResponse) {
-              if(serverResponse) {
-                location.href = '/dashboard';
-              }
-            },
-            error: function(errorResponse) {
-              if(errorResponse) {
-                alert(`User login error: ${errorResponse.responseText}`);
-              }            
-            }
-          });
-        });
-      });
+    $.ajax({
+      type: "POST",
+      url: '/api/v1/user/login',
+      data,
+      success: function(serverResponse) {
+        if (serverResponse) {
+          const roleid = serverResponse.roleid; // Access the roleid from the server response
+          console.log(roleid); // Print the roleid to the console
+
+          // Perform actions based on the roleid
+          if (roleid === 2) {
+            location.href = '/admin_dashboard';
+          } else if (roleid === 1 || roleid === 3) {
+            location.href = '/dashboard';
+          }
+        }
+      },
+      error: function(errorResponse) {
+        if (errorResponse) {
+          alert(`User login error: ${errorResponse.responseText}`);
+        }
+      }
+    });
+  });
+});
+
       </script>    
     <div>
       <nav class="navbar navbar-inverse" style="padding-left:130px;">

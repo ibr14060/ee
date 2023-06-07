@@ -58,6 +58,7 @@ module.exports = function (app) {
     if (user.password !== password) {
       return res.status(401).send("Password does not match");
     }
+    const roleid = user.roleid;
 
     // set the expiry time as 15 minutes after the current time
     const token = v4();
@@ -65,11 +66,15 @@ module.exports = function (app) {
     const expiresat = new Date(+currentDateTime + 900000); // expire in 15 minutes
 
     // create a session containing information about the user and expiry time
-    const session = {
+    const session = { 
       userid: user.id,
       token,
       expiresat,
     };
+      const response = {
+        roleid,
+        message: "Login successful",
+      };
     try {
       await db("sessions").insert(session);
       // In the response, set a cookie on the client with the name "session_cookie"
@@ -77,10 +82,11 @@ module.exports = function (app) {
       return res
         .cookie("session_token", token, { expires: expiresat })
         .status(200)
-        .send("login successful");
+        .json(response);
     } catch (e) {
       console.log(e.message);
       return res.status(400).send("Could not register user");
     }
   });
+  
 }

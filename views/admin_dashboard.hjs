@@ -131,9 +131,10 @@
         <ul class="nav navbar-nav">
           <li class="active"><a href="/dashboard">Home</a></li>
           <li><a href="/stations_example">Station</a></li>
-        
+          <li><a href="/users">Users</a></li>
+          <li><a href="/users/add">Add Users</a></li>
           <li><a href="/">Logout</a></li>
-          <li><a href="/purchase">Purchase</a></li>
+       
           <li><a href="/routes">routes</a></li>
           <li class="dropdown">
               <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -141,11 +142,11 @@
                 <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
-                <li><a href="/request_arefund">Request a Refund</a></li>
-                <li><a href="/request_a_senior">Request a Senior</a></li>
+                <li><a href="/admin_refund_requests">Request a Refund</a></li>
+                <li><a href="/admin_senior_requests">Request a Senior</a></li>
               </ul>
             </li>
-            <li><a href="/tickets">My Tickets</a></li>
+           
 
         </ul>
       </nav>

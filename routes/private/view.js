@@ -106,4 +106,8 @@ module.exports = function (app) {
     const user = await getUser(req);
     return res.render('tickets', user);
   });
+  app.get('/admin_dashboard', async function (req, res) {
+    const user = await getUser(req);
+    return res.render('admin_dashboard', user);
+  });
 };
