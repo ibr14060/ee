@@ -42,7 +42,7 @@
         </div>
         <div class="container">
             <h1>Purchase Ticket</h1>
-            <form action="/purchase" method="POST">
+            <form action="/purchase" method="POST" id="purchaseForm">
                 <div>
                     <label for="origin">Origin:</label>
                     <select id="origin" name="origin">
@@ -81,6 +81,24 @@
             </form>
         </div>
     </div>
+
+    <script>
+        document.getElementById('purchaseForm').addEventListener('submit', function (event) {
+            var paymentMethod = document.getElementById('payment').value;
+            if (paymentMethod === 'online') {
+                event.preventDefault();
+                var origin = document.getElementById('origin').value;
+                var destination = document.getElementById('destination').value;
+                var datetime = document.getElementById('datetime').value;
+
+                var redirectURL = '/purchase_online?origin=' + encodeURIComponent(origin) +
+                    '&destination=' + encodeURIComponent(destination) +
+                    '&datetime=' + encodeURIComponent(datetime);
+
+                window.location.href = redirectURL;
+            }
+        });
+    </script>
 </body>
 
 </html>

@@ -58,7 +58,39 @@ module.exports = function (app) {
       return res.status(400).send("Could not update password");
     }
   });
+  //---------------------------------------------------------------------------
+  app.post("/api/v1/payment/ticket", async function (req, res) {
+    const {
+      creditCardNumber,
+      holderName,
+      payedAmount,
+      origin,
+      destination,
+      tripDate,
+    } = req.body;
+
+    try {
+      // Retrieve the user object using the getUser method
+      const user = await getUser(req); // Assuming getUser is an asynchronous function that returns the user object
+
+      // Insert the ticket data into the tickets table
+      const ticket = await db("tickets").insert({
+        origin,
+        destination,
+        userid: user.userid, // Use the retrieved user ID
+        subid: null, // Set the subscription ID if applicable
+        tripdate: tripDate,
+      }).returning('*');
+
+      // Return the created ticket data in the response
+      res.status(201).json({ ticket });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: "Something went wrong" });
+    }
+  });
   //------------------------------------------------------------------------//
+  //msh sh8ala
   app.post("/api/v1/payment/subscription", async function (req, res) {
     const { creditCardNumber, holderName, payedAmount, subType, zoneId } = req.body;
 
@@ -91,6 +123,21 @@ module.exports = function (app) {
   });
 
   //---------------------------------------------------------------//
+  app.get("/api/v1/subscription", async function (req, res) {
+    try {
+      const user = await getUser(req);
+      const userid = user.userid;
+      // Retrieve zones data from database
+      const subscription = await db.select("*").from("subsription").where(subsription.userid === userid);
+
+      // Return zones data as JSON response
+      return res.status(200).json(subscription);
+    } catch (e) {
+      console.error(e.message);
+      return res.status(500).send("Server error");
+    }
+  });
+  //------------------------------------------------------------------
   app.get("/api/v1/zones", async function (req, res) {
     try {
       // Retrieve zones data from database
@@ -543,7 +590,82 @@ app.delete("/api/v1/stations/:stationid", async function (req, res) {
     res.status(500).json({ error: "Something went wrong" });
   }
 });
+/*
+app.get("/api/v1/checkprice", async function (req, res) {
+  try {
+    const { originstationid } = req.params;
+    const { destinationstationid } = req.params;
+    
+  } catch (e) {
+    console.error(e.message);
+    return res.status(500).send("Server error");
+  }
+});
+*/
+app.get('/api/v1/tickets/price/:originId/:destinationId', async (req, res) => {
+  const { originId, destinationId } = req.params;
 
+  try {
+    // Function to get the number of stations between origin and destination
+    const getNumberOfStations = async (currentStationId, destinationId, visited = new Set()) => {
+      visited.add(currentStationId); // Mark the current station as visited
+
+      if (currentStationId === destinationId) {
+        // If the current station is the destination, return 0
+        return 0;
+      }
+
+      // Get the routes that depart from the current station
+      const routes = await db
+        .select('*')
+        .from('routes')
+        .where('fromstationid', currentStationId);
+
+      for (const route of routes) {
+        const nextStationId = route.tostationid;
+
+        if (!visited.has(nextStationId)) {
+          const stationsCount = await getNumberOfStations(nextStationId, destinationId, visited);
+
+          if (stationsCount >= 0) {
+            // If a route is found from the next station to the destination, return the total number of stations
+            return stationsCount + 1;
+          }
+        }
+      }
+
+      // If no route is found between the current station and the destination, return -1
+      visited.delete(currentStationId);
+      return -1;
+    };
+
+    // Get the number of stations between origin and destination
+    const numberOfStations = await getNumberOfStations(Number(originId), Number(destinationId));
+
+    if (numberOfStations === -1) {
+      return res.status(404).json({ error: 'No route found between the origin and destination' });
+    }
+
+    // Determine the zone type
+    const zoneType = numberOfStations <= 9 ? 'A' : numberOfStations <= 16 ? 'B' : 'C';
+
+    // Get the ticket price from the zones table
+    const price = await db
+      .select('price')
+      .from('zones')
+      .where({ zonetype: zoneType })
+      .first();
+
+    if (!price) {
+      return res.status(404).json({ error: 'Ticket price not found' });
+    }
+
+    res.json({ numberOfStations, ticketPrice: price.price });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Something went wrong' });
+  }
+});
 
 
 };

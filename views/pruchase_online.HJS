@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Purchase Online</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel='stylesheet' href='/styles/bootstrap.min.css' />
+    <link rel='stylesheet' href='/styles/style.css' />
+    <style>
+        /* Custom styles for the purchase_online page */
+        body {
+            background-color: #f8f8f8;
+            padding: 20px;
+        }
+
+        .credit-card-form {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .credit-card-form label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .credit-card-form input[type="text"],
+        .credit-card-form input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+
+        .credit-card {
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            padding: 20px;
+        }
+
+        .card-number,
+        .card-holder,
+        .card-expiration {
+            margin-bottom: 10px;
+        }
+
+        .pay-button {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="credit-card-form">
+        <h2>Enter Credit Card Information</h2>
+        <form id="purchaseForm">
+            <div class="form-group">
+                <label for="cardNumber">Card Number:</label>
+                <input type="text" id="cardNumber" name="cardNumber" placeholder="Enter card number">
+            </div>
+            <div class="form-group">
+                <label for="cardHolder">Card Holder:</label>
+                <input type="text" id="cardHolder" name="cardHolder" placeholder="Enter card holder name">
+            </div>
+            <div class="form-group">
+                <label for="expirationDate">Expiration Date:</label>
+                <input type="text" id="expirationDate" name="expirationDate" placeholder="MM/YY">
+            </div>
+            <div class="form-group">
+                <label for="cvv">CVV:</label>
+                <input type="number" id="cvv" name="cvv" placeholder="Enter CVV">
+            </div>
+            <div class="credit-card">
+                <div class="card-number">
+                    <strong>Card Number:</strong>
+                    <span id="displayCardNumber">**** **** **** ****</span>
+                </div>
+                <div class="card-holder">
+                    <strong>Card Holder:</strong>
+                    <span id="displayCardHolder">FULL NAME</span>
+                </div>
+                <div class="card-expiration">
+                    <strong>Expiration Date:</strong>
+                    <span id="displayExpirationDate">MM/YY</span>
+                </div>
+            </div>
+            <div class="pay-button">
+                <button type="submit" class="btn btn-primary">Pay</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Update the displayed card number
+            $("#cardNumber").on("input", function () {
+                const cardNumber = $(this).val();
+                $("#displayCardNumber").text(maskCardNumber(cardNumber));
+            });
+
+            // Update the displayed card holder name
+            $("#cardHolder").on("input", function () {
+                const cardHolder = $(this).val();
+                $("#displayCardHolder").text(cardHolder.toUpperCase());
+            });
+
+            // Update the displayed expiration date
+            $("#expirationDate").on("input", function () {
+                const expirationDate = $(this).val();
+                $("#displayExpirationDate").text(expirationDate);
+            });
+
+            // Function to mask the card number
+            function maskCardNumber(cardNumber) {
+                const maskedNumber = "**** **** **** " + cardNumber.slice(-4);
+                return maskedNumber;
+            }                // Extract the query parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const origin = urlParams.get('origin');
+            const destination = urlParams.get('destination');
+            const datetime = urlParams.get('datetime');
+
+            // Pre-fill the form fields
+            $("#origin").val(origin);
+            $("#destination").val(destination);
+            $("#datetime").val(datetime);
+
+            // Handle form submission
+            $("#purchaseForm").submit(function (event) {
+                event.preventDefault();
+                // Gather the form data
+                var formData = {
+                    creditCardNumber: $("#cardNumber").val(),
+                    holderName: $("#cardHolder").val(),
+                    payedAmount: 0, // You can set the actual amount here
+                    origin: origin,
+                    destination: destination,
+                    tripDate: datetime
+                };
+
+                // Make an AJAX call to your API endpoint
+                $.ajax({
+                    type: "POST",
+                    url: "/api/v1/payment/ticket",
+                    data: JSON.stringify(formData),
+                    contentType: "application/json",
+                    success: function (response) {
+                        // Handle the success response
+                        alert("Payment successful!");
+                    },
+                    error: function (error) {
+                        // Handle the error response
+                        alert("Payment failed. Please try again.");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
