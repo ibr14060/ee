@@ -93,7 +93,9 @@
                     <th scope="col">Type</th>
                     <th scope="col">Position</th>
                     <th scope="col">Status</th>
+                    {{#Admin}}
                     <th scope="col">Actions</th>
+                    {{/Admin}}
                 </tr>
             </thead>
             <tbody>

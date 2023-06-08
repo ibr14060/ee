@@ -733,5 +733,26 @@ app.post("/api/v1/payment/subscription", async function (req, res) {
   }
 });
 
+app.put('/api/v1/ride/simulate/:id', async (req, res) => {
+  const { id } = req.params;
+  const { origin, destination, tripdate } = req.body;
+
+
+
+  try {
+    const { ride } = await db('rides').where({ id }).update({ origin, destination, tripdate });
+
+    if (ride === 0) {
+      return res.status(404).json({ error: 'ride not found' });
+    }
+
+    return res.status(200).json({ message: 'ride updated successfully' });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: 'Error updating ride', details: error.message });
+  }
+});
+
+
 
 };

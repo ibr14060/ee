@@ -92,7 +92,9 @@
                     <th scope="col">route name</th>
                     <th scope="col">fromstation id</th>
                     <th scope="col">tostation id</th>
+                    {{#Admin}}
                     <th scope="col">Actions</th>
+                      {{/Admin}}
                 </tr>
             </thead>
             <tbody>
