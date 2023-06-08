@@ -146,6 +146,8 @@
               </ul>
             </li>
             <li><a href="/tickets">My Tickets</a></li>
+            
+             <li><a href="/Subscription">Subscription</a></li>
 
         </ul>
       </nav>

@@ -72,18 +72,42 @@ module.exports = function (app) {
     try {
       // Retrieve the user object using the getUser method
       const user = await getUser(req); // Assuming getUser is an asynchronous function that returns the user object
+      // Retrieve origin and destination station names
+      const [originStation, destinationStation] = await db("stations")
+        .whereIn("id", [origin, destination])
+        .select("stationname");
 
       // Insert the ticket data into the tickets table
-      const ticket = await db("tickets").insert({
-        origin,
-        destination,
-        userid: user.userid, // Use the retrieved user ID
-        subid: null, // Set the subscription ID if applicable
+      const [ticketId] = await db("tickets")
+        .insert({
+          origin: originStation.stationname,
+          destination: destinationStation.stationname,
+          userid: user.userid, // Use the retrieved user ID
+          subid: null, // Set the subscription ID if applicable
+          tripdate: tripDate,
+        })
+        .returning("id");
+
+      // Insert the transaction data into the transactions table
+      await db("transactions").insert({
+        amount: payedAmount,
+        userid: user.userid,
+        purchasedid: ticketId, // Use the inserted ticket ID
+        purchasetype: "ticket",
+      });
+
+      // Insert the ride data into the rides table
+      await db("rides").insert({
+        status: "upcoming",
+        origin: originStation.stationname,
+        destination: destinationStation.stationname,
+        userid: user.userid,
+        ticketid: ticketId, // Use the inserted ticket ID
         tripdate: tripDate,
-      }).returning('*');
+      });
 
       // Return the created ticket data in the response
-      res.status(201).json({ ticket });
+      res.status(201).json({ ticketId });
     } catch (error) {
       console.log(error);
       res.status(500).json({ error: "Something went wrong" });
@@ -91,36 +115,7 @@ module.exports = function (app) {
   });
   //------------------------------------------------------------------------//
   //msh sh8ala
-  app.post("/api/v1/payment/subscription", async function (req, res) {
-    const { creditCardNumber, holderName, payedAmount, subType, zoneId } = req.body;
-
-    // Validate request parameters
-    if (!creditCardNumber || !holderName || !payedAmount || !subType || !zoneId) {
-      return res.status(400).send("All parameters are required");
-    }
-
-    try {
-      // Process payment using payment gateway API or other payment service
-      const paymentResult = await processPayment(creditCardNumber, holderName, payedAmount);
-
-      // Save subscription details to database
-      const userId = req.user.id;
-      await db("subsription").insert({
-        userid: userId,
-        credit_card_number: creditCardNumber,
-        holder_name: holderName,
-        payed_amount: payedAmount,
-        subscription_type: subType,
-        zone_id: zoneId
-      });
-
-      // Return success response
-      return res.status(200).json({ message: "Subscription payment successful" });
-    } catch (e) {
-      console.error(e.message);
-      return res.status(500).send("Server error");
-    }
-  });
+ 
 
   //---------------------------------------------------------------//
   app.get("/api/v1/subscription", async function (req, res) {
@@ -682,6 +677,59 @@ app.get('/api/v1/requests/senior', async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: 'Error retrieving requests', details: error.message });
+  }
+});
+app.post("/api/v1/payment/subscription", async function (req, res) {
+  const {
+    creditCardNumber,
+    holderName,
+    payedAmount,
+    subType,
+    zoneId
+  } = req.body;
+
+  try {
+    // Retrieve the user object using the getUser method
+    const user = await getUser(req); // Assuming getUser is an asynchronous function that returns the user object
+
+    // Get the number of tickets based on the subscription subtype
+    let noOfTickets;
+    switch (subType) {
+      case "annual":
+        noOfTickets = 100;
+        break;
+      case "quarterly":
+        noOfTickets = 50;
+        break;
+      case "monthly":
+        noOfTickets = 10;
+        break;
+      default:
+        return res.status(400).json({ error: "Invalid subscription subtype" });
+    }
+    // Insert the subscription data into the subscriptions table
+    const subscription = await db("subscription").insert({
+      userid: user.userid,
+      zoneid: zoneId,
+      subtype: subType,
+      nooftickets: noOfTickets
+    }).returning('*');
+
+    console.log("subscription", subscription);
+
+    // Insert the transaction data into the transactions table
+    await db("transactions").insert({
+      amount: payedAmount,
+      userid: user.userid,
+      purchasedid: subscription[0].id,
+      purchasetype: "subscription"
+    });
+
+    // Return the created subscription data in the response
+    res.status(201).json({ subscription });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Something went wrong" });
   }
 });
 

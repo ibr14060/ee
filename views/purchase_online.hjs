@@ -90,6 +90,9 @@
                     <span id="displayExpirationDate">MM/YY</span>
                 </div>
             </div>
+            <input type="hidden" id="origin" name="origin" value="{{origin}}">
+            <input type="hidden" id="destination" name="destination" value="{{destination}}">
+            <input type="hidden" id="datetime" name="datetime" value="{{datetime}}">
             <div class="pay-button">
                 <button type="submit" class="btn btn-primary">Pay</button>
             </div>
@@ -121,11 +124,14 @@
             function maskCardNumber(cardNumber) {
                 const maskedNumber = "**** **** **** " + cardNumber.slice(-4);
                 return maskedNumber;
-            }                // Extract the query parameters
+            }
+
+            // Extract the query parameters
             const urlParams = new URLSearchParams(window.location.search);
             const origin = urlParams.get('origin');
             const destination = urlParams.get('destination');
             const datetime = urlParams.get('datetime');
+            const ticketPrice = urlParams.get('ticketPrice');
 
             // Pre-fill the form fields
             $("#origin").val(origin);
@@ -139,7 +145,7 @@
                 var formData = {
                     creditCardNumber: $("#cardNumber").val(),
                     holderName: $("#cardHolder").val(),
-                    payedAmount: 0, // You can set the actual amount here
+                    payedAmount: ticketPrice, // Use the calculated paid amount
                     origin: origin,
                     destination: destination,
                     tripDate: datetime
@@ -161,6 +167,7 @@
                     }
                 });
             });
+
         });
     </script>
 </body>

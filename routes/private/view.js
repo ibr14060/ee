@@ -42,10 +42,7 @@ module.exports = function (app) {
     return res.render('create_station', user);
   });
 
-  app.get('/purchase_online', async function (req, res) {
-    const user = await getUser(req);
-    return res.render('purchase_online', user);
-  });
+
 
   app.get('/request_arefund', async function (req, res) {
     const user = await getUser(req);
@@ -61,14 +58,8 @@ module.exports = function (app) {
     return res.render('create_route', user);
   });
 
-  const isSub = async function (req, res) {
-    const user = await getUser(req);
-    const y = await db('subscription').where('userid', user.userid);
-    const isSubscribed = y.length === 0 ? false : true;
-    return res.render('purchase', { user, isSubscribed });
-  }
 
-  app.get('/purchase', isSub);
+  
 
   app.get('/users/add', async function (req, res) {
     return res.render('add-user');
@@ -110,4 +101,29 @@ module.exports = function (app) {
     const user = await getUser(req);
     return res.render('admin_dashboard', user);
   });
+  app.get('/subscription', async function (req, res) {
+    const user = await getUser(req);
+    const y = await db('subscription').where('userid', user.userid);
+    const isSubscribed = y.length === 0 ? false : true;
+    const subscriptions = await db('subscription').where('userid', user.userid);
+    const zones = await db.select('*').from('zones');
+    return res.render('subscription', { user, isSubscribed , subscriptions, zones});
+  });
+  app.get('/purchase', async function (req, res) {
+    const isSubscribed = await isSub(req, res);
+    const user = await getUser(req);
+    const stations = await db.select('*').from('stations');
+    return res.render('purchase', { user, isSubscribed, stations });
+  });
+  app.get('/purchase_online', async function (req, res) {
+    const user = await getUser(req);
+    return res.render('purchase_online', user);
+  });
+  const isSub = async function (req, res) {
+    const user = await getUser(req);
+    const y = await db('subscription').where('userid', user.userid);
+    const isSubscribed = y.length === 0 ? false : true;
+    return isSubscribed;
+
+  }
 };

@@ -25,10 +25,8 @@
             <ul class="nav navbar-nav">
                 <li><a href="/dashboard">Home</a></li>
                 <li><a href="/stations_example">Stations</a></li>
-                   {{#isAdmin}}
                 <li><a href="/users">Users</a></li>
                 <li><a href="/users/add">Add Users</a></li>
-                 {{/isAdmin}}
                 <li><a href="/">Logout</a></li>
             </ul>
         </nav>
@@ -91,56 +89,63 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Function to fetch the ticket price based on the selected origin and destination
+            function getTicketPrice() {
+                var originId = document.getElementById('origin').value;
+                var destinationId = document.getElementById('destination').value;
 
-        // Function to fetch the ticket price based on the selected origin and destination
-        function getTicketPrice() {
-            var originId = document.getElementById('origin').value;
-            var destinationId = document.getElementById('destination').value;
+                if (originId === destinationId) {
+                    alert('Please select different origin and destination');
+                    return;
+                }
 
-            if (originId === destinationId) {
-                alert('Please select different origin and destination');
-                return;
-            }
-
-            // Make an AJAX request to the server to get the ticket price
-            $.ajax({
-                url: '/api/v1/tickets/price/' + originId + '/' + destinationId,
-                method: 'GET',
-                data: {
-                    originId: originId,
-                    destinationId: destinationId
-                },
-                success: function (response) {
-                    var priceDiv = document.getElementById('priceDiv');
-                    priceDiv.innerHTML = response.ticketPrice;
-                },
-                error: function (xhr, status, error) {
-                    if (xhr.status === 404 && xhr.responseJSON.error === 'No route found between the origin and destination') {
-                        alert('No route found between the origin and destination');
-                    } else {
+                // Make an AJAX request to the server to get the ticket price
+                $.ajax({
+                    url: '/api/v1/tickets/price/' + originId + '/' + destinationId,
+                    method: 'GET',
+                    data: {
+                        originId: originId,
+                        destinationId: destinationId
+                    },
+                    success: function (response) {
+                        var ticketPriceElement = document.getElementById('ticketPrice');
+                        if (ticketPriceElement) {
+                            ticketPriceElement.innerText = response.ticketPrice;
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        var errorMessage = 'An error occurred while fetching the ticket price.';
+                        if (xhr.responseJSON && xhr.responseJSON.error) {
+                            errorMessage += '\nError: ' + xhr.responseJSON.error;
+                        }
+                        alert(errorMessage);
                         console.log(error);
                     }
+                });
+            }
+
+            // Event listener when the origin or destination selection is changed
+            document.getElementById('origin').addEventListener('change', getTicketPrice);
+            document.getElementById('destination').addEventListener('change', getTicketPrice);
+
+            document.getElementById('purchaseForm').addEventListener('submit', function (event) {
+                var paymentMethod = document.getElementById('payment').value;
+                if (paymentMethod === 'online') {
+                    event.preventDefault();
+                    var origin = document.getElementById('origin').value;
+                    var destination = document.getElementById('destination').value;
+                    var datetime = document.getElementById('datetime').value;
+                    var ticketPrice = document.getElementById('ticketPrice').innerText; // Get the ticket price
+                    var redirectURL = '/purchase_online?origin=' + encodeURIComponent(origin) +
+                        '&destination=' + encodeURIComponent(destination) +
+                        '&datetime=' + encodeURIComponent(datetime) +
+                        '&ticketPrice=' + encodeURIComponent(ticketPrice); // Include the ticket price in the URL
+
+                    window.location.href = redirectURL;
                 }
             });
-        }
 
-        // Event listener when the origin or destination selection is changed
-        document.getElementById('origin').addEventListener('change', getTicketPrice);
-        document.getElementById('destination').addEventListener('change', getTicketPrice);
-
-        document.getElementById('purchaseForm').addEventListener('submit', function (event) {
-            var paymentMethod = document.getElementById('payment').value;
-            if (paymentMethod === 'online') {
-                event.preventDefault();
-                var origin = document.getElementById('origin').value;
-                var destination = document.getElementById('destination').value;
-                var datetime = document.getElementById('datetime').value;
-                var redirectURL = '/purchase_online?origin=' + encodeURIComponent(origin) +
-                    '&destination=' + encodeURIComponent(destination) +
-                    '&datetime=' + encodeURIComponent(datetime);
-
-                window.location.href = redirectURL;
-            }
         });
     </script>
 </body>

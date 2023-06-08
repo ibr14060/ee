@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Subscription</title>
+    <link rel='stylesheet' href='/styles/bootstrap.min.css' />
+    <link rel='stylesheet' href='/styles/style.css' />
+</head>
+
+<body>
+    <div class="container">
+        <h1>Subscription</h1>
+        {{#isSubscribed}}
+        <div>
+            <h3>Your Current Subscription:</h3>
+            <p>Subscription Type: {{subscriptions.subtype}}</p>
+            <p>Zone Type: {{subscriptions.zoneid}}</p>
+            <p>No. of Tickets: {{subscriptions.nooftickets}}</p>
+        </div>
+        {{/isSubscribed}}
+        <form id="subscriptionForm">
+            <div>
+                <label for="subscriptionType">Subscription Type:</label>
+                <select id="subscriptionType" name="subscriptionType">
+                    <option value="monthly">Monthly</option>
+                    <option value="quarterly">Quarterly</option>
+                    <option value="annual">Annual</option>
+                </select>
+            </div>
+            <div>
+                <label for="zoneType">Zone Type:</label>
+                <select id="zoneType" name="zoneType">
+                    {{#zones}}
+                    <option value="{{id}}">{{zonetype}}</option>
+                    {{/zones}}
+                </select>
+            </div>
+            <div>
+                <label for="cardNumber">Card Number:</label>
+                <input type="text" id="cardNumber" name="cardNumber" placeholder="Enter card number">
+            </div>
+            <div>
+                <label for="cardHolder">Card Holder:</label>
+                <input type="text" id="cardHolder" name="cardHolder" placeholder="Enter card holder name">
+            </div>
+            <div>
+                <label for="expirationDate">Expiration Date:</label>
+                <input type="text" id="expirationDate" name="expirationDate" placeholder="MM/YY">
+            </div>
+            <div>
+                <label for="cvv">CVV:</label>
+                <input type="number" id="cvv" name="cvv" placeholder="Enter CVV">
+            </div>
+            <div>
+                <h2>Price: <span id="subscriptionPrice">0</span></h2>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Function to calculate the subscription price
+            function calculatePrice() {
+                var subscriptionType = $("#subscriptionType").val();
+                var zoneType = $("#zoneType").val();
+
+                // Make assumptions for the price based on the subscription and zone type
+                var price;
+                switch (subscriptionType) {
+                    case "monthly":
+                        price = 10;
+                        break;
+                    case "quarterly":
+                        price = 30;
+                        break;
+                    case "annual":
+                        price = 100;
+                        break;
+                    default:
+                        price = 0;
+                        break;
+                }
+
+                // Update the price element
+                $("#subscriptionPrice").text(price);
+            }
+
+            // Event listener when the subscription type or zone type selection is changed
+            $("#subscriptionType, #zoneType").on("change", calculatePrice);
+
+            // Handle form submission
+            $("#subscriptionForm").submit(function (event) {
+                event.preventDefault();
+
+                // Get the form data
+                var formData = {
+                    creditCardNumber: $("#cardNumber").val(),
+                    holderName: $("#cardHolder").val(),
+                    payedAmount: $("#subscriptionPrice").text(),
+                    subType: $("#subscriptionType").val(),
+                    zoneId: $("#zoneType").val()
+                };
+                console.log(formData);
+
+                // Submit the form data to the API endpoint
+                $.ajax({
+                    url: "/api/v1/payment/subscription",
+                    method: "POST",
+                    data: formData,
+                    success: function (response) {
+                        // Handle successful response
+                        console.log(response);
+                        alert("Subscription successful!");
+                    },
+                    error: function (error) {
+                        // Handle error response
+                        console.error(error);
+                        alert("Error subscribing!");
+                    }
+                });
+            });
+
+            // Calculate the initial price
+            calculatePrice();
+        });
+    </script>
+</body>
+
+</html>
