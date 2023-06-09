@@ -6,10 +6,11 @@
     <style>
         /* Your CSS styles here */
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            padding: 20px;
+            background-color: #f8f8f8;
+            background-image: url("https://images.fineartamerica.com/images-medium-large-5/washington-dc-metro-station-iv-clarence-holmes.jpg");
+            background-size: cover;
         }
+
 
         h1 {
             color: #333;
@@ -18,7 +19,7 @@
         .container {
             max-width: 500px;
             margin: 0 auto;
-            background-color: #fff;
+            background-color: #d8d5d5;
             padding: 20px;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -36,10 +37,10 @@
 
         .form-group input[type="text"],
         .form-group select {
-            width: 100%;
+            width: 100%; /* Update the width to 100% */
             padding: 10px;
             border-radius: 5px;
-            border: 1px solid #ccc;
+            border: 1px solid #383636;
         }
 
         .form-group button {

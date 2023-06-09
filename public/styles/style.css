@@ -1,3 +1,11 @@
+
+.body {
+  background-color: #f8f8f8;
+  background-image: url("https://th.bing.com/th/id/R.65bbff74385442aeeecbaa5bb074cf2e?rik=OuiL2oHKnTkeow&pid=ImgRaw&r=0");
+  background-size: cover;
+}
+
+
 .center {
   text-align: center;
 }
