@@ -6,7 +6,14 @@
     <link rel='stylesheet' href='/styles/bootstrap.min.css' />
     <link rel='stylesheet' href='/styles/style.css' />
 </head>
-
+<style>
+    body {
+        background-image: url('https://img.freepik.com/free-vector/train-metro-station-interior-night-time_33099-1715.jpg?w=2000&t=st=1685982576~exp=1685983176~hmac=bad4c46971f388e5467136a201ca0d0333eb7cb6d7e70b6d501594ec36adc7ed');
+        background-size: auto 100%;
+        /* Adjust the size as needed (cover, contain, auto, etc.) */
+        /* Prevent the image from repeating */
+    }
+</style>
 <body>
     <div class="container">
         <h1>Subscription</h1>

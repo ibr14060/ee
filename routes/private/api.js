@@ -677,54 +677,62 @@ app.get('/api/v1/requests/senior', async (req, res) => {
     return res.status(500).json({ error: 'Error retrieving requests', details: error.message });
   }
 });
-app.post("/api/v1/payment/subscription", async function (req, res) {
+app.post("/api/v1/tickets/purchase/subscription", async function (req, res) {
   const {
-    creditCardNumber,
-    holderName,
-    payedAmount,
-    subType,
-    zoneId
+   // subId,
+    origin,
+    destination,
+    tripDate,
   } = req.body;
-
+  const user = await getUser(req);
+  const userid = user.userid;
   try {
     // Retrieve the user object using the getUser method
-    const user = await getUser(req); // Assuming getUser is an asynchronous function that returns the user object
+    const user = await getUser(req);
+    const userid = user.userid;// Assuming getUser is an asynchronous function that returns the user object
 
-    // Get the number of tickets based on the subscription subtype
-    let noOfTickets;
-    switch (subType) {
-      case "annual":
-        noOfTickets = 100;
-        break;
-      case "quarterly":
-        noOfTickets = 50;
-        break;
-      case "monthly":
-        noOfTickets = 10;
-        break;
-      default:
-        return res.status(400).json({ error: "Invalid subscription subtype" });
-    }
-    // Insert the subscription data into the subscriptions table
-    const subscription = await db("subscription").insert({
-      userid: user.userid,
-      zoneid: zoneId,
-      subtype: subType,
-      nooftickets: noOfTickets
-    }).returning('*');
+   
+    // Decrement the nooftickets in the user's subscription
+    await db("subscription")
+      .where("userid", userid)
+     // .andWhere("userid", user.userid)
+      .decrement("nooftickets", 1);
 
-    console.log("subscription", subscription);
+      const [subscription] = await db("subscription")
+      .where("userid", userid)
+      .select("id");
+      const subId = subscription.id; 
+    // Insert the ticket data into the tickets table
+    const [ticketId] = await db("tickets")
+      .insert({
+        origin: origin,
+        destination: destination,
+        userid: user.userid, // Use the retrieved user ID
+        subid: subId, // Use the provided subscription ID
+        tripdate: tripDate,
+      })
+      .returning("id");
 
     // Insert the transaction data into the transactions table
     await db("transactions").insert({
-      amount: payedAmount,
+      amount: 0, // Set the amount to 0 for subscription payments
       userid: user.userid,
-      purchasedid: subscription[0].id,
-      purchasetype: "subscription"
+      purchasedid: ticketId, // Use the inserted ticket ID
+      purchasetype: "ticket",
     });
 
-    // Return the created subscription data in the response
-    res.status(201).json({ subscription });
+    // Insert the ride data into the rides table
+    await db("rides").insert({
+      status: "upcoming",
+      origin: origin,
+      destination: destination,
+      userid: user.userid,
+      ticketid: ticketId, // Use the inserted ticket ID
+      tripdate: tripDate,
+    });
+
+    // Return the created ticket data in the response
+    res.status(201).json({ ticketId });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Something went wrong" });

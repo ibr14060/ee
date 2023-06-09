@@ -89,6 +89,8 @@
     </div>
 
     <script>
+        var subId = "{{subid}}";
+
         document.addEventListener('DOMContentLoaded', function () {
             // Function to fetch the ticket price based on the selected origin and destination
             function getTicketPrice() {
@@ -99,15 +101,12 @@
                     alert('Please select different origin and destination');
                     return;
                 }
+                
 
                 // Make an AJAX request to the server to get the ticket price
                 $.ajax({
                     url: '/api/v1/tickets/price/' + originId + '/' + destinationId,
                     method: 'GET',
-                    data: {
-                        originId: originId,
-                        destinationId: destinationId
-                    },
                     success: function (response) {
                         var ticketPriceElement = document.getElementById('ticketPrice');
                         if (ticketPriceElement) {
@@ -130,9 +129,9 @@
             document.getElementById('destination').addEventListener('change', getTicketPrice);
 
             document.getElementById('purchaseForm').addEventListener('submit', function (event) {
+                event.preventDefault();
                 var paymentMethod = document.getElementById('payment').value;
                 if (paymentMethod === 'online') {
-                    event.preventDefault();
                     var origin = document.getElementById('origin').value;
                     var destination = document.getElementById('destination').value;
                     var datetime = document.getElementById('datetime').value;
@@ -143,10 +142,36 @@
                         '&ticketPrice=' + encodeURIComponent(ticketPrice); // Include the ticket price in the URL
 
                     window.location.href = redirectURL;
+                } else if (paymentMethod === 'subscription') {
+                    var origin = document.getElementById('origin').value;
+                    var destination = document.getElementById('destination').value;
+                    var datetime = document.getElementById('datetime').value;
+                    $.ajax({
+                        type: 'POST',
+                        url: "/api/v1/tickets/purchase/subscription",
+                        data: JSON.stringify({
+                            subId: subId,
+                            origin: origin,
+                            destination: destination,
+                            tripDate: datetime
+                        }),
+                        contentType: 'application/json',
+                        success: function (response) {
+                            alert("Payment successful!");
+                            // Redirect to a success page or perform any other necessary action
+                        },
+                        error: function (error) {
+                            // Handle the error response
+                            alert("Payment failed. Please try again.");
+                        }
+                    });
+
+
+
                 }
             });
-
         });
+
     </script>
 </body>
 
