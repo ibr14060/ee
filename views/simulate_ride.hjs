@@ -56,20 +56,20 @@
     <h1>Ride Simulation</h1>
     <form id="rideSimulationForm">
       <label for="origin">Origin:</label>
-        <select id="origin" name="origin">
-            <option value="">Choose origin</option>
-            {{#stations}}
-            <option value="{{id}}">{{stationname}}</option>
-            {{/stations}}
-        </select>
+      <select id="origin" name="origin">
+        <option value="">Choose origin</option>
+        {{#stations}}
+        <option value="{{id}}">{{stationname}}</option>
+        {{/stations}}
+      </select>
 
-       <label for="destination">Destination:</label>
-        <select id="destination" name="destination">
-            <option value="">Choose destination</option>
-            {{#stations}}
-            <option value="{{id}}">{{stationname}}</option>
-            {{/stations}}
-        </select>
+      <label for="destination">Destination:</label>
+      <select id="destination" name="destination">
+        <option value="">Choose destination</option>
+        {{#stations}}
+        <option value="{{id}}">{{stationname}}</option>
+        {{/stations}}
+      </select>
 
       <label for="dateTime">Date and Time:</label>
       <input type="datetime-local" id="dateTime" name="dateTime" required>
@@ -88,15 +88,15 @@
       $('#rideSimulationForm').submit(function(event) {
         event.preventDefault(); // Prevent the form from submitting normally
 
-        const ride = $('#rideDropdown').val();
-        const location = $('#locationDropdown').val();
-        const dateTime = $('#dateTime').val();
+        const origin = $('#origin').val();
+        const destination = $('#destination').val();
+        const datetime =new Date($('#dateTime').val()).toISOString();
         const id = $('#idInput').val();
 
         const data = {
-          ride: ride,
-          location: location,
-          dateTime: dateTime,
+          origin: origin,
+          destination: destination,
+          tripdate: datetime,
           id: id
         };
 
