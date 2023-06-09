@@ -153,6 +153,8 @@
              
               <li><a href="/rides">My Rides</a></li>
 
+               <li><a href="/simulate_ride">Simulate Rides</a></li>
+
         </ul>
       </nav>
     </div>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ride Simulation</title>
+  <style>
+    body {
+      background-color: #f8f8f8;
+      background-image: url("https://i.gifer.com/IuDi.gif");
+      background-size: cover;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    select,
+    input[type="datetime-local"],
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+    }
+
+    button {
+      background-color: #4caf50;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Ride Simulation</h1>
+    <form id="rideSimulationForm">
+      <label for="origin">Origin:</label>
+        <select id="origin" name="origin">
+            <option value="">Choose origin</option>
+            {{#stations}}
+            <option value="{{id}}">{{stationname}}</option>
+            {{/stations}}
+        </select>
+
+       <label for="destination">Destination:</label>
+        <select id="destination" name="destination">
+            <option value="">Choose destination</option>
+            {{#stations}}
+            <option value="{{id}}">{{stationname}}</option>
+            {{/stations}}
+        </select>
+
+      <label for="dateTime">Date and Time:</label>
+      <input type="datetime-local" id="dateTime" name="dateTime" required>
+
+      <label for="idInput">ID:</label>
+      <input type="text" id="idInput" name="idInput" required>
+
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      // Handle form submission
+      $('#rideSimulationForm').submit(function(event) {
+        event.preventDefault(); // Prevent the form from submitting normally
+
+        const ride = $('#rideDropdown').val();
+        const location = $('#locationDropdown').val();
+        const dateTime = $('#dateTime').val();
+        const id = $('#idInput').val();
+
+        const data = {
+          ride: ride,
+          location: location,
+          dateTime: dateTime,
+          id: id
+        };
+
+        // Perform the AJAX request
+        $.ajax({
+          type: 'PUT',
+          url: '/api/v1/ride/simulate/' + id,
+          data: data,
+          success: function(response) {
+            console.log('Data updated successfully:', response);
+            // Handle success response, such as showing a success message or redirecting to another page
+          },
+          error: function(xhr, status, error) {
+            console.log('Error updating data:', error);
+            // Handle error response, such as showing an error message
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

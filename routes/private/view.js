@@ -143,4 +143,10 @@ module.exports = function (app) {
     const rides = await db.select('*').from("rides").where("userid", user.userid);
     return res.render('rides', { ...user, rides });
   });
+  app.get('/simulate_ride', async function (req, res) {
+    
+    const user = await getUser(req);
+    const stations = await db.select('*').from('stations');
+    return res.render('simulate_ride', {stations });
+  });
 };
