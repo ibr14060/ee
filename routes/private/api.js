@@ -33,24 +33,24 @@ module.exports = function (app) {
         return res.status(401).send("Invalid session token");
       }
 
-      const currentPassword = req.body.currentPassword;
-      console.log("currentPassword", currentPassword);
-      const newPassword = req.body.newPassword;
+      const password = req.body.password;
+      console.log("currentPassword", password);
+      const newpassword = req.body.newpassword;
 
       // Perform password validation and checks here...
 
       // Check if the current password matches the user's actual password
-      if (currentPassword !== user.password) {
+      if (password !== user.password) {
         return res.status(401).send("Current password is incorrect");
       }
 
       // Update the user's password to the new password
-      user.password = newPassword;
+      user.password = newpassword;
 
       // Perform any necessary password hashing or encryption here...
 
       // Update the user's password in the database
-      await db("users").where("id", user.userid).update({ password: newPassword });
+      await db("users").where("id", user.userid).update({ password: newpassword });
 
       return res.status(200).send("Password updated successfully");
     } catch (e) {
@@ -405,14 +405,12 @@ app.post('/api/v1/refund/request', async (req, res) => {
 
   app.put('/api/v1/route/:id', async (req, res) => {
     const { id } = req.params;
-    const { routename, fromstationid, tostationid } = req.body;
+    const { routename } = req.body;
 
-    if (!routename || !fromstationid || !tostationid) {
-      return res.status(400).json({ error: 'Missing required parameters' });
-    }
+   
 
     try {
-      const { rowCount } = await db('routes').where({ id }).update({ routename, fromstationid, tostationid });
+      const { rowCount } = await db('routes').where({ id }).update({ routename });
 
       if (rowCount === 0) {
         return res.status(404).json({ error: 'Route not found' });

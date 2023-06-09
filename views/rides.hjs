@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Rides</title>
+    <link rel='stylesheet' href='/styles/bootstrap.min.css' />
+    <link rel='stylesheet' href='/styles/style.css' />
+    <style>
+        /* Custom styles for the rides page */
+        body {
+            background-color: #f8f8f8;
+            padding: 20px;
+        }
+
+        .navbar {
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            margin-bottom: 10px;
+        }
+
+        .table {
+            background-color: #fff;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f5f5f5;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .add-ride-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <div>
+            <nav class="navbar navbar-inverse" style="padding-left:130px;">
+                <ul class="nav navbar-nav">
+                    <li><a href="/dashboard">Home</a></li>
+                    <li><a href="/rides">Rides</a></li>
+                    <li><a href="/users">Users</a></li>
+                    <li><a href="/users/add">Add Users</a></li>
+                    <li><a href="/">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Origin</th>
+                    <th scope="col">Destination</th>
+                    <th scope="col">User ID</th>
+                    <th scope="col">Ticket ID</th>
+                    <th scope="col">Trip Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#rides}}
+                <tr>
+                    <td>{{id}}</td>
+                    <td>{{status}}</td>
+                    <td>{{origin}}</td>
+                    <td>{{destination}}</td>
+                    <td>{{userid}}</td>
+                    <td>{{ticketid}}</td>
+                    <td>{{tripdate}}</td>
+                </tr>
+                {{/rides}}
+            </tbody>
+        </table>
+    </div>
+    </div>
+</body>
+
+</html>

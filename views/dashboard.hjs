@@ -150,6 +150,8 @@
             <li><a href="/tickets">My Tickets</a></li>
             
              <li><a href="/Subscription">Subscription</a></li>
+             
+              <li><a href="/rides">My Rides</a></li>
 
         </ul>
       </nav>
@@ -161,6 +163,7 @@
           <p>Email: <span id="email">{{user.email}}</span> <i class="far fa-copy copy-icon"
               onclick="copyEmailToClipboard()"></i>
           </p>
+           
         </div>
       </div>
       <div class="subscription-info">
@@ -172,6 +175,7 @@
         <p>Subscription status: <span class="icon not-subscribed"><i class="fas fa-times"></i></span> Not Subscribed</p>
         {{/isSubscribed}}
       </div>
+      <a class="Reset Password" href="/reset_password">Reset password</a>
     </div>
   </div>
 </body>

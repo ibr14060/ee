@@ -8,6 +8,16 @@
       <script src="/js/bootstrap.min.js" type="text/javascript"></script>
     </head>
   </head>
+   <style>
+    /* Add custom styles here */
+
+    /* Custom styles for the dashboard */
+   body {
+      background-color: #f8f8f8;
+      background-image: url("https://th.bing.com/th/id/R.65bbff74385442aeeecbaa5bb074cf2e?rik=OuiL2oHKnTkeow&pid=ImgRaw&r=0");
+      background-size: cover;
+    }
+</style>
   <body>
     <script>
     $(document).ready(function(){    

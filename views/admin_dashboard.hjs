@@ -171,6 +171,7 @@
         <p>Subscription status: <span class="icon not-subscribed"><i class="fas fa-times"></i></span> Not Subscribed</p>
         {{/isSubscribed}}
       </div>
+      <a class="Reset Password" href="/reset_password">Reset password</a>
     </div>
   </div>
 </body>

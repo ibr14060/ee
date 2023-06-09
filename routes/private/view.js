@@ -126,4 +126,21 @@ module.exports = function (app) {
     return isSubscribed;
 
   }
+  app.get('/edit_route/:id', (req, res) => {
+    const routeId = req.params.id;
+    
+    // Render the edit_route page and pass the route ID to the view
+    res.render('edit_route', { routeId });
+  });
+  app.get('/reset_password', (req, res) => {
+    const routeId = req.params.id;
+    
+    // Render the edit_route page and pass the route ID to the view
+    res.render('reset_password');
+  });
+  app.get('/rides', async function (req, res) {
+    const user = await getUser(req);
+    const rides = await db.select('*').from("rides").where("userid", user.userid);
+    return res.render('rides', { ...user, rides });
+  });
 };

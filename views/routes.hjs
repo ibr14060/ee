@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Routes</title>
     <link rel='stylesheet' href='/styles/bootstrap.min.css' />
@@ -49,7 +48,8 @@
             margin-top: 20px;
         }
 
-        .delete-button {
+        .delete-button,
+        .edit-button {
             display: inline-block;
             padding: 6px 12px;
             margin-bottom: 0;
@@ -64,12 +64,20 @@
             border: 1px solid transparent;
             border-radius: 4px;
             color: #fff;
+        }
+
+        .delete-button {
             background-color: #d9534f;
             border-color: #d43f3a;
+            margin-right: 5px;
+        }
+
+        .edit-button {
+            background-color: #337ab7;
+            border-color: #2e6da4;
         }
     </style>
 </head>
-
 <body>
     <div>
         <div>
@@ -92,9 +100,9 @@
                     <th scope="col">route name</th>
                     <th scope="col">fromstation id</th>
                     <th scope="col">tostation id</th>
-                  {{#isAdmin}}
+                    {{#isAdmin}}
                     <th scope="col">Actions</th>
-                     {{/isAdmin}}
+                    {{/isAdmin}}
                 </tr>
             </thead>
             <tbody>
@@ -104,11 +112,12 @@
                     <td>{{routename}}</td>
                     <td>{{fromstationid}}</td>
                     <td>{{tostationid}}</td>
-                     {{#isAdmin}}
+                    {{#isAdmin}}
                     <td>
                         <button class="delete-button" onclick="deleteRoute('{{id}}')">Delete</button>
+                        <a class="edit-button" href="/edit_route/{{id}}">Edit</a>
                     </td>
-                     {{/isAdmin}}
+                    {{/isAdmin}}
                 </tr>
                 {{/routes}}
             </tbody>
@@ -117,7 +126,6 @@
         <div class="add-route-container">
             <a href="/create_route" class="btn btn-primary">Add route</a>
         </div>
-        
         {{/isAdmin}}
     </div>
 
@@ -141,5 +149,4 @@
         }
     </script>
 </body>
-
 </html>
