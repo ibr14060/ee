@@ -6,10 +6,9 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-image: url("https://eu.thumbnail.oscpdata.com/routes-v2/ROUTE_3861401_300x240_PINK_ret.png");
+            background-image: url("https://enterprise.press/wp-content/uploads/2020/02/railway-tracks-1600px.jpg");
             background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
+
             padding: 20px;
         }
 
@@ -20,7 +19,7 @@
         .container {
             max-width: 400px;
             margin: 0 auto;
-            background-color: #fff;
+            background-color: rgb(237,237,237);
             padding: 20px;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -36,7 +35,7 @@
             width: 100%;
             padding: 10px;
             border-radius: 5px;
-            border: 1px solid #ccc;
+            border: 1px solid rgb(237,237,237);
             margin-bottom: 15px;
         }
 
@@ -44,7 +43,7 @@
             width: 100%;
             padding: 10px;
             border-radius: 5px;
-            border: 1px solid #ccc;
+            border: 1px solid rgb(237,237,237);
             margin-bottom: 15px;
         }
 

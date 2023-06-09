@@ -3,12 +3,12 @@
 <head>
   <title>Refund Requests</title>
   <style>
+    
     body {
       font-family: Arial, sans-serif;
-      background-image: url("white.png");
+      background-image: url("https://media.tenor.com/56YMc63ICdEAAAAC/money-kayy.gif");
       background-size: cover;
-      background-repeat: no-repeat;
-      background-position: center;
+
       padding: 20px;
     }
 
