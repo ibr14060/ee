@@ -8,10 +8,18 @@
 </head>
 <style>
     body {
-        background-image: url('https://img.freepik.com/free-vector/train-metro-station-interior-night-time_33099-1715.jpg?w=2000&t=st=1685982576~exp=1685983176~hmac=bad4c46971f388e5467136a201ca0d0333eb7cb6d7e70b6d501594ec36adc7ed');
-        background-size: auto 100%;
-        /* Adjust the size as needed (cover, contain, auto, etc.) */
-        /* Prevent the image from repeating */
+        background-image: url('https://cdn.pixabay.com/photo/2015/05/16/12/03/escalator-769790_1280.jpg');
+        background-size: cover;
+    }
+
+    .container {
+        background-color: rgb(228,230,229);
+        padding: 20px;
+        margin-top: 20px;
+        border-radius: 5px;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
     }
 </style>
 <body>
