@@ -255,6 +255,59 @@ module.exports = function (app) {
     }
   });
 
+  app.post("/api/v1/payment/subscription", async function (req, res) {
+    const {
+      creditCardNumber,
+      holderName,
+      payedAmount,
+      subType,
+      zoneId
+    } = req.body;
+
+    try {
+      // Retrieve the user object using the getUser method
+      const user = await getUser(req); // Assuming getUser is an asynchronous function that returns the user object
+
+      // Get the number of tickets based on the subscription subtype
+      let noOfTickets;
+      switch (subType) {
+        case "annual":
+          noOfTickets = 100;
+          break;
+        case "quarterly":
+          noOfTickets = 50;
+          break;
+        case "monthly":
+          noOfTickets = 10;
+          break;
+        default:
+          return res.status(400).json({ error: "Invalid subscription subtype" });
+      }
+      // Insert the subscription data into the subscriptions table
+      const subscription = await db("subscription").insert({
+        userid: user.userid,
+        zoneid: zoneId,
+        subtype: subType,
+        nooftickets: noOfTickets
+      }).returning('*');
+
+      console.log("subscription", subscription);
+
+      // Insert the transaction data into the transactions table
+      await db("transactions").insert({
+        amount: payedAmount,
+        userid: user.userid,
+        purchasedid: subscription[0].id,
+        purchasetype: "subscription"
+      });
+
+      // Return the created subscription data in the response
+      res.status(201).json({ subscription });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: "Something went wrong" });
+    }
+  });
 // post request to request a senior degree
 app.post('/api/v1/senior/request', async (req, res) => {
   try {
